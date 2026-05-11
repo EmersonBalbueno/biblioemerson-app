@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="theme-color" content="#0b1423" />
+
+<link rel="manifest" href="./manifest.webmanifest" />
+<link rel="icon" type="image/png" sizes="192x192" href="./icon-192.png" />
+<link rel="apple-touch-icon" href="./icon-192.png" />
+<meta name="mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="default" />
+<meta name="apple-mobile-web-app-title" content="BiblioEmerson" />
+
+<title>BiblioEmerson SuperApp Final</title>
+<style>
+:root{--bg:#0b1423;--bg2:#07101b;--card:rgba(13,22,36,.92);--line:rgba(255,255,255,.08);--txt:#e8eef9;--mut:#9db0ca;--a:#59c8ff;--b:#39d98a;--c:#8b5cf6;--w:#fbbf24;--d:#fb7185;--ok:#9bf3c7}
+*{box-sizing:border-box}html,body{margin:0;padding:0}body{font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:var(--txt);background:radial-gradient(circle at top,rgba(89,200,255,.14),transparent 28%),linear-gradient(180deg,var(--bg2),var(--bg));min-height:100vh}
+.app{max-width:1200px;margin:0 auto;padding:18px 14px 28px}.hero,.panel,.box,.item,.mini,.call{border:1px solid var(--line);background:linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.02));border-radius:24px}.hero{padding:18px;position:sticky;top:10px;z-index:5;backdrop-filter:blur(10px)}.panel{display:none;padding:16px;margin-top:16px}.panel.active{display:block}.pill{display:inline-flex;gap:8px;align-items:center;padding:8px 12px;border-radius:999px;border:1px solid var(--line);background:rgba(255,255,255,.05);font-size:.84rem;font-weight:800}.hero h1{margin:10px 0 8px;font-size:clamp(1.9rem,4vw,2.7rem);line-height:1.03}.mut{color:var(--mut)}.small{font-size:.92rem;line-height:1.55}.tiny{font-size:.82rem;line-height:1.45;color:var(--mut)}
+.tabs,.grid2,.grid3,.stats,.list,.chips,.actions,.checks{display:grid;gap:12px}.tabs{grid-template-columns:repeat(9,minmax(0,1fr));margin-top:16px}.tab,.btn,.ghost,.danger,.tag{border:1px solid var(--line);background:rgba(255,255,255,.05);color:var(--txt);border-radius:16px;min-height:44px;padding:0 14px;font-weight:800;cursor:pointer}.tab.active{background:linear-gradient(135deg,rgba(89,200,255,.22),rgba(57,217,138,.18));border-color:rgba(89,200,255,.35)}.btn{border:none;background:linear-gradient(135deg,var(--a),var(--b));color:#072031}.danger{background:rgba(251,113,133,.14);color:#ffc1cb}.tag{min-height:34px;font-size:.82rem;padding:0 12px}.grid2{grid-template-columns:1.1fr .9fr}.grid3{grid-template-columns:repeat(3,minmax(0,1fr))}.stats{grid-template-columns:repeat(5,minmax(0,1fr))}.box,.mini,.item,.call{padding:14px}.title{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-bottom:10px}.title h2,.title h3,.item h3{margin:0;font-size:1rem}.num{font-size:1.7rem;font-weight:900;line-height:1;margin-bottom:8px}.field,.sel,.ta{width:100%;min-height:48px;border:1px solid rgba(255,255,255,.12);background:#09111d;color:var(--txt);border-radius:15px;padding:0 14px;outline:none}.ta{min-height:110px;padding:14px;resize:vertical}.field:focus,.sel:focus,.ta:focus{border-color:rgba(89,200,255,.55);box-shadow:0 0 0 4px rgba(89,200,255,.14)}label{display:block;font-size:.86rem;font-weight:800;margin:0 0 8px}.meta{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}.badge,.status,.cchip{display:inline-flex;align-items:center;gap:6px;padding:0 10px;min-height:30px;border-radius:999px;border:1px solid var(--line);font-size:.8rem;font-weight:800;background:rgba(255,255,255,.05)}.status.ok{background:rgba(57,217,138,.14);color:var(--ok)}.status.open{background:rgba(251,191,36,.14);color:#ffe28d}.cchip{background:rgba(89,200,255,.14);color:#c6eeff;cursor:pointer}.progress{height:12px;border-radius:999px;background:rgba(255,255,255,.07);overflow:hidden;border:1px solid var(--line)}.progress span{display:block;height:100%;background:linear-gradient(135deg,var(--a),var(--b))}.mono{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;background:rgba(255,255,255,.05);padding:10px 12px;border-radius:14px;border:1px solid var(--line);font-size:.86rem;line-height:1.5}.checks{grid-template-columns:repeat(auto-fit,minmax(220px,1fr))}.check{display:flex;gap:10px;align-items:flex-start;padding:12px;border:1px solid var(--line);border-radius:16px;background:rgba(255,255,255,.03)}.links{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px}.link{display:block;color:inherit;text-decoration:none}.link strong{display:block;margin-bottom:6px}.link span{display:block;color:var(--mut);font-size:.9rem;line-height:1.45}.profile-wrap{display:flex;gap:14px;align-items:center}.avatar{width:74px;height:74px;border-radius:50%;background:linear-gradient(135deg,var(--a),var(--b));color:#072031;font-weight:900;display:flex;align-items:center;justify-content:center;font-size:1.35rem;flex:0 0 auto}.quote-box{padding:14px;border-radius:18px;background:rgba(139,92,246,.10);border:1px solid rgba(139,92,246,.22)}.quote-box em{display:block;font-size:1rem;line-height:1.55;color:#efe6ff;font-style:normal}.quote-box span{display:block;margin-top:8px;color:var(--mut);font-size:.86rem}.mini-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px}.bullets{margin:8px 0 0 18px;padding:0;color:var(--mut);font-size:.9rem;line-height:1.55}
+.install-row{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-top:14px}.install-msg{color:var(--mut);font-size:.88rem;line-height:1.45}.install-chip{display:inline-flex;align-items:center;gap:8px;padding:9px 12px;border-radius:999px;border:1px solid var(--line);background:rgba(255,255,255,.05);font-size:.84rem;font-weight:700}
+@media (max-width:1080px){.tabs{grid-template-columns:repeat(5,minmax(0,1fr))}.stats{grid-template-columns:repeat(3,minmax(0,1fr))}.grid2,.grid3{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:760px){.tabs,.stats,.grid2,.grid3,.checks{grid-template-columns:1fr}.hero{position:static}}
+</style>
+</head>
+<body>
+<main class="app">
+  <section class="hero">
+    <div class="pill">📚 BiblioEmerson SuperApp Final</div>
+    <h1>Biblioteconomia, estudo e pesquisa em um só lugar</h1>
+    <p class="mut small">Versão final consolidada em arquivo único: formação, agenda, notas, acervo, links, CDD, pesquisa, ABNT, mural, perfil acadêmico e backup local em um só lugar.</p>
+    <div class="install-row">
+      <button id="install-app-btn" class="btn" type="button">Instalar no Android</button>
+      <span id="install-app-status" class="install-msg">Publique esta pasta em um link HTTPS para instalar como app no Android.</span>
+    </div>
+    <div class="install-row">
+      <span class="install-chip">📱 PWA instalável</span>
+      <span class="install-chip">💾 Funciona offline após abrir</span>
+      <span class="install-chip">🔒 Precisa de link HTTPS</span>
+    </div>
+    <div class="tabs">
+      <button class="tab active" data-p="inicio">Início</button>
+      <button class="tab" data-p="formacao">Formação</button>
+      <button class="tab" data-p="agenda">Agenda</button>
+      <button class="tab" data-p="notas">Notas</button>
+      <button class="tab" data-p="acervo">Acervo</button>
+      <button class="tab" data-p="links">Links</button>
+      <button class="tab" data-p="cdd">CDD</button>
+      <button class="tab" data-p="pesquisa">Pesquisa</button>
+      <button class="tab" data-p="perfil">Perfil</button>
+      <button class="tab" data-p="mural">Mural</button>
+    </div>
+  </section>
+
+  <section class="panel active" data-s="inicio">
+    <div class="grid2">
+      <div class="box">
+        <div class="title"><h2>Meu perfil acadêmico</h2><span id="home-level" class="badge">Graduação</span></div>
+        <div class="profile-wrap">
+          <div id="home-avatar" class="avatar">EB</div>
+          <div>
+            <h3 id="home-name" style="margin:0 0 6px;font-size:1.1rem">Emerson Balbueno Teles</h3>
+            <div id="home-course-line" class="small mut">Biblioteconomia • UFPB • 3º período</div>
+            <div class="tiny" style="margin-top:8px" id="home-profile-summary">Base técnica, estudo por semestre e preparação inicial para pesquisa.</div>
+          </div>
+        </div>
+        <div id="home-profile-meta" class="meta" style="margin-top:12px"></div>
+      </div>
+      <div class="box">
+        <div class="title"><h2>Próximo passo</h2><span class="tiny">Agenda</span></div>
+        <div id="home-next" class="call"></div>
+        <div class="actions" style="margin-top:12px;grid-template-columns:repeat(auto-fit,minmax(120px,max-content))">
+          <button class="tag" data-go="agenda">Abrir agenda</button>
+          <button class="tag" data-go="formacao">Ver semestre</button>
+          <button class="tag" data-go="cdd">Consultar CDD</button>
+          <button class="tag" data-go="pesquisa">Abrir pesquisa</button>
+        </div>
+      </div>
+    </div>
+    <div class="box" style="margin-top:16px">
+      <div class="title"><h2>Visão geral</h2><span class="tiny">Atualização automática</span></div>
+      <div class="stats">
+        <div class="mini"><div class="num" id="st-tasks">0</div><div class="small">Pendências</div></div>
+        <div class="mini"><div class="num" id="st-notes">0</div><div class="small">Notas</div></div>
+        <div class="mini"><div class="num" id="st-items">0</div><div class="small">Acervo</div></div>
+        <div class="mini"><div class="num" id="st-cdd">0</div><div class="small">Favoritos CDD</div></div>
+        <div class="mini"><div class="num" id="st-sem">1º</div><div class="small">Semestre</div></div>
+      </div>
+    </div>
+    <div class="grid3" style="margin-top:16px">
+      <div class="box"><div class="title"><h2>Trilha do semestre</h2><button class="tag" data-go="formacao">Abrir</button></div><div id="home-sem"></div></div>
+      <div class="box"><div class="title"><h2>Projeto / pesquisa</h2><button class="tag" data-go="pesquisa">Abrir</button></div><div id="home-research"></div><div class="tiny" id="home-level-tip" style="margin-top:10px"></div></div>
+      <div class="box"><div class="title"><h2>Links de pesquisa</h2><button class="tag" data-go="links">Gerenciar</button></div><div id="home-links" class="links"></div></div>
+    </div>
+    <div class="grid2" style="margin-top:16px">
+      <div class="box"><div class="title"><h2>Minhas disciplinas do período</h2><button class="tag" data-go="formacao">Gerenciar</button></div><div id="home-subjects"></div></div>
+      <div class="box"><div class="title"><h2>Frase em destaque</h2><span class="tiny">Biblioteconomia</span></div><div id="home-quote"></div></div>
+    </div>
+  </section>
+
+  <section class="panel" data-s="formacao">
+    <div class="grid2">
+      <div class="box">
+        <div class="title"><h2>Trilha por semestre</h2><span class="tiny">Graduação em Biblioteconomia</span></div>
+        <label for="sem-select">Semestre atual</label>
+        <select id="sem-select" class="sel"><option value="1">1º semestre</option><option value="2">2º semestre</option><option value="3">3º semestre</option><option value="4">4º semestre</option><option value="5">5º semestre</option><option value="6">6º semestre</option><option value="7">7º semestre</option><option value="8">8º semestre</option></select>
+        <div class="call small" id="sem-goal" style="margin-top:12px"></div>
+        <div class="box" style="margin-top:12px;padding:12px">
+          <div class="title" style="margin-bottom:8px"><h3>Progresso</h3><span class="tiny" id="sem-pct">0%</span></div>
+          <div class="progress"><span id="sem-bar" style="width:0%"></span></div>
+          <div id="sem-meta" class="tiny" style="margin-top:8px"></div>
+        </div>
+      </div>
+      <div class="box">
+        <div class="title"><h2>Glossário técnico</h2><span class="tiny">Busca por termo</span></div>
+        <label for="glossary-q">Buscar</label>
+        <div class="grid2" style="grid-template-columns:1fr auto">
+          <input id="glossary-q" class="field" placeholder="Ex.: indexação, metadado, MARC21" />
+          <button id="glossary-btn" class="ghost">Buscar</button>
+        </div>
+        <div id="glossary-list" class="list" style="margin-top:12px"></div>
+      </div>
+    </div>
+
+    <div class="grid2" style="margin-top:16px">
+      <div class="box">
+        <div class="title"><h2>Minhas disciplinas do período atual</h2><span class="tiny">Professor, trabalhos, notas e observações</span></div>
+        <input id="subj-id" type="hidden" />
+        <div class="grid2">
+          <div><label for="subj-name">Nome da disciplina</label><input id="subj-name" class="field" placeholder="Ex.: Catalogação" /></div>
+          <div><label for="subj-prof">Professor(a)</label><input id="subj-prof" class="field" placeholder="Ex.: Prof. Maria Silva" /></div>
+        </div>
+        <div class="grid3" style="margin-top:12px">
+          <div><label for="subj-email">E-mail do professor(a)</label><input id="subj-email" class="field" placeholder="professor@instituicao.br" /></div>
+          <div><label for="subj-room">Sala / local</label><input id="subj-room" class="field" placeholder="Sala 203 / Lab 1" /></div>
+          <div><label for="subj-link">Link da turma / aula</label><input id="subj-link" class="field" placeholder="https://..." /></div>
+        </div>
+        <div class="grid3" style="margin-top:12px">
+          <div><label for="subj-schedule">Horário</label><input id="subj-schedule" class="field" placeholder="Seg/Qua • 19h às 21h" /></div>
+          <div><label for="subj-grade">Nota manual (opcional)</label><input id="subj-grade" class="field" placeholder="Ex.: 8,5" /></div>
+          <div><label for="subj-absences">Faltas</label><input id="subj-absences" class="field" placeholder="Ex.: 2" /></div>
+        </div>
+        <div class="grid3" style="margin-top:12px">
+          <div><label for="subj-av1">AV1 / Prova 1</label><input id="subj-av1" class="field" placeholder="Ex.: 8,0" /></div>
+          <div><label for="subj-av2">AV2 / Prova 2</label><input id="subj-av2" class="field" placeholder="Ex.: 9,0" /></div>
+          <div><label for="subj-workgrade">Trabalho / projeto</label><input id="subj-workgrade" class="field" placeholder="Ex.: 10,0" /></div>
+        </div>
+        <div class="grid2" style="margin-top:12px">
+          <div><label for="subj-seminar">Seminário / apresentação</label><input id="subj-seminar" class="field" placeholder="Ex.: 8,5" /></div>
+          <div><label for="subj-next-date">Próxima atividade / prazo</label><input id="subj-next-date" class="field" type="date" /></div>
+        </div>
+        <label for="subj-next-task" style="margin-top:12px">Próxima atividade</label>
+        <input id="subj-next-task" class="field" placeholder="Ex.: Entregar fichamento / Seminário / Prova 1" />
+        <label for="subj-works" style="margin-top:12px">Trabalhos / avaliações</label>
+        <textarea id="subj-works" class="ta" placeholder="Um item por linha&#10;Ex.: Seminário sobre Ranganathan&#10;Prova 1&#10;Fichamento de texto"></textarea>
+        <label for="subj-notes" style="margin-top:12px">Observações</label>
+        <textarea id="subj-notes" class="ta" placeholder="Links da turma, critérios do professor, bibliografia básica, lembretes..."></textarea>
+        <div class="actions" style="margin-top:12px;grid-template-columns:repeat(auto-fit,minmax(120px,max-content))">
+          <button id="subj-save" class="btn">Salvar disciplina</button>
+          <button id="subj-clear" class="ghost">Limpar</button>
+        </div>
+      </div>
+      <div class="box">
+        <div class="title"><h2>Resumo do período atual</h2><span class="tiny">Seu semestre real</span></div>
+        <div id="period-summary"></div>
+        <div id="period-upcoming" style="margin-top:12px"></div>
+        <div id="formation-quote" style="margin-top:12px"></div>
+      </div>
+    </div>
+    <div class="box" style="margin-top:16px">
+      <div class="title"><h2>Minhas disciplinas cadastradas</h2><span id="my-disc-count" class="tiny">0 disciplinas</span></div>
+      <div id="my-disc-list" class="list"></div>
+    </div>
+    <div class="box" style="margin-top:16px">
+      <div class="title"><h2>Mapa sugerido do semestre</h2><span id="disc-count" class="tiny">0 disciplinas</span></div>
+      <div id="disc-list" class="list"></div>
+    </div>
+  </section>
+
+  <section class="panel" data-s="agenda">
+    <div class="grid2">
+      <div class="box">
+        <div class="title"><h2>Novo compromisso</h2><span class="tiny">Agenda</span></div>
+        <label>Título</label><input id="task-title" class="field" placeholder="Ex.: Revisar leituras de Organização da Informação" />
+        <div class="grid2" style="margin-top:12px">
+          <div><label>Data e hora</label><input id="task-date" class="field" type="datetime-local" /></div>
+          <div><label>Observações</label><input id="task-note" class="field" placeholder="Metas, link, sala..." /></div>
+        </div>
+        <div class="actions" style="margin-top:12px;grid-template-columns:repeat(auto-fit,minmax(120px,max-content))"><button id="task-save" class="btn">Salvar</button><button id="task-clear" class="ghost">Limpar</button></div>
+      </div>
+      <div class="box">
+        <div class="title"><h2>Resumo</h2><span class="tiny">Pendentes e concluídos</span></div>
+        <div class="grid2"><div class="mini"><div class="num" id="ag-open">0</div><div class="small">Pendentes</div></div><div class="mini"><div class="num" id="ag-done">0</div><div class="small">Concluídos</div></div></div>
+      </div>
+    </div>
+    <div class="box" style="margin-top:16px"><div class="title"><h2>Compromissos</h2><button id="ag-clear-done" class="ghost">Limpar concluídos</button></div><div id="agenda-list" class="list"></div></div>
+  </section>
+
+  <section class="panel" data-s="notas">
+    <div class="box">
+      <div class="title"><h2>Nova nota</h2><span class="tiny">Fichamentos, conceitos e resumos</span></div>
+      <label>Título</label><input id="note-title" class="field" placeholder="Ex.: Representação temática" />
+      <label style="margin-top:12px">Conteúdo</label><textarea id="note-body" class="ta" placeholder="Registre ideias, dúvidas, resumos e referências."></textarea>
+      <div class="actions" style="margin-top:12px;grid-template-columns:repeat(auto-fit,minmax(120px,max-content))"><button id="note-save" class="btn">Salvar</button><button id="note-clear" class="ghost">Limpar</button></div>
+    </div>
+    <div class="box" style="margin-top:16px"><div class="title"><h2>Notas guardadas</h2><span id="note-count" class="tiny">0 notas</span></div><div id="notes-list" class="list"></div></div>
+  </section>
+
+  <section class="panel" data-s="acervo">
+    <div class="box">
+      <div class="title"><h2>Novo item no acervo</h2><span class="tiny">Livros, artigos, links e arquivos</span></div>
+      <div class="grid3">
+        <div><label>Título</label><input id="item-title" class="field" placeholder="Ex.: Introdução à Biblioteconomia" /></div>
+        <div><label>Tipo</label><select id="item-type" class="sel"><option>Livro</option><option>Artigo</option><option>Link</option><option>Arquivo</option><option>Norma</option><option>Outro</option></select></div>
+        <div><label>Código CDD</label><input id="item-cdd" class="field" placeholder="020, 370..." /></div>
+      </div>
+      <div class="grid2" style="margin-top:12px"><div><label>URL</label><input id="item-url" class="field" placeholder="https://..." /></div><div><label>Descrição</label><input id="item-desc" class="field" placeholder="Resumo, autor, utilidade..." /></div></div>
+      <div class="actions" style="margin-top:12px;grid-template-columns:repeat(auto-fit,minmax(120px,max-content))"><button id="item-save" class="btn">Salvar</button><button id="item-clear" class="ghost">Limpar</button></div>
+    </div>
+    <div class="box" style="margin-top:16px"><div class="title"><h2>Itens catalogados</h2><span id="item-count" class="tiny">0 itens</span></div><div id="items-list" class="list"></div></div>
+  </section>
+
+  <section class="panel" data-s="links">
+    <div class="grid2">
+      <div class="box"><div class="title"><h2>Links fixos de pesquisa</h2><span class="tiny">Sugestões úteis</span></div><div id="default-links" class="links"></div></div>
+      <div class="box">
+        <div class="title"><h2>Adicionar link</h2><span class="tiny">Personalizado</span></div>
+        <label>Título</label><input id="link-title" class="field" placeholder="Ex.: BRAPCI" />
+        <div class="grid2" style="margin-top:12px"><div><label>Categoria</label><input id="link-tag" class="field" placeholder="Pesquisa" /></div><div><label>URL</label><input id="link-url" class="field" placeholder="https://..." /></div></div>
+        <div class="actions" style="margin-top:12px;grid-template-columns:repeat(auto-fit,minmax(120px,max-content))"><button id="link-save" class="btn">Salvar</button><button id="link-clear" class="ghost">Limpar</button></div>
+      </div>
+    </div>
+    <div class="box" style="margin-top:16px"><div class="title"><h2>Links personalizados</h2><span id="link-count" class="tiny">0 links</span></div><div id="custom-links" class="list"></div></div>
+  </section>
+
+  <section class="panel" data-s="cdd">
+    <div class="grid2">
+      <div class="box">
+        <div class="title"><h2>Consultar CDD</h2><span class="tiny">Número → assunto</span></div>
+        <div class="grid2" style="grid-template-columns:1fr auto"><input id="cdd-code" class="field" placeholder="Ex.: 020, 025.4, 370, 910" /><button id="cdd-search" class="btn">Consultar</button></div>
+        <div class="chips" style="margin-top:12px;grid-template-columns:repeat(auto-fit,minmax(90px,max-content))">
+          <button class="tag cdd-sug" data-code="020">020</button><button class="tag cdd-sug" data-code="025">025</button><button class="tag cdd-sug" data-code="370">370</button><button class="tag cdd-sug" data-code="610">610</button><button class="tag cdd-sug" data-code="780">780</button><button class="tag cdd-sug" data-code="910">910</button>
+        </div>
+        <div id="cdd-result" style="margin-top:14px"></div>
+      </div>
+      <div class="box">
+        <div class="title"><h2>Buscar assunto</h2><span class="tiny">Assunto → número</span></div>
+        <div class="grid2" style="grid-template-columns:1fr auto"><input id="cdd-subject" class="field" placeholder="Ex.: biblioteca, educação, música" /><button id="cdd-subject-btn" class="ghost">Buscar</button></div>
+        <div id="cdd-subject-list" class="list" style="margin-top:12px"></div>
+      </div>
+    </div>
+    <div class="grid2" style="margin-top:16px">
+      <div class="box"><div class="title"><h2>Classes principais</h2><span class="tiny">Visão geral</span></div><div id="cdd-main" class="grid2"></div></div>
+      <div class="box"><div class="title"><h2>Treino rápido</h2><button id="quiz-new" class="ghost">Nova pergunta</button></div><div id="quiz-box"></div></div>
+    </div>
+    <div class="grid2" style="margin-top:16px">
+      <div class="box"><div class="title"><h2>Favoritos CDD</h2><button id="cdd-clear-fav" class="ghost">Limpar</button></div><div id="cdd-favs" class="list"></div></div>
+      <div class="box"><div class="title"><h2>Recentes</h2><button id="cdd-clear-rec" class="ghost">Limpar</button></div><div id="cdd-recents" class="list"></div></div>
+    </div>
+  </section>
+
+  <section class="panel" data-s="pesquisa">
+    <div class="grid2">
+      <div class="box">
+        <div class="title"><h2>Área inicial de pesquisa</h2><span class="tiny">Projeto, artigo e TCC</span></div>
+        <div class="grid2"><div><label>Tema</label><input id="res-theme" class="field" placeholder="Ex.: Competência em informação em bibliotecas universitárias" /></div><div><label>Título provisório</label><input id="res-title" class="field" placeholder="Ex.: Mediação da informação..." /></div></div>
+        <label style="margin-top:12px">Problema / pergunta</label><textarea id="res-problem" class="ta" placeholder="Qual pergunta seu trabalho pretende responder?"></textarea>
+        <label style="margin-top:12px">Objetivo geral</label><textarea id="res-objective" class="ta" placeholder="Ex.: analisar, identificar, compreender, mapear..."></textarea>
+        <div class="grid2" style="margin-top:12px"><div><label>Método</label><input id="res-method" class="field" placeholder="Pesquisa bibliográfica, estudo de caso..." /></div><div><label>Palavras-chave</label><input id="res-keywords" class="field" placeholder="mediação; bibliotecas; competência em informação" /></div></div>
+        <label style="margin-top:12px">Notas / autores / base teórica</label><textarea id="res-notes" class="ta" placeholder="Autores, conceitos, referências e próximos passos..."></textarea>
+        <div class="actions" style="margin-top:12px;grid-template-columns:repeat(auto-fit,minmax(120px,max-content))"><button id="res-save" class="btn">Salvar projeto</button><button id="res-clear" class="ghost">Limpar</button></div>
+      </div>
+      <div class="box">
+        <div class="title"><h2>Painel da pesquisa</h2><span class="tiny">Resumo local</span></div>
+        <div id="res-summary"></div><div id="research-quote" style="margin-top:12px"></div>
+        <div class="box" style="margin-top:12px;padding:12px"><div class="title"><h3>Checklist inicial</h3><span class="tiny">Projeto ou TCC</span></div><div id="res-checks" class="checks"></div></div>
+      </div>
+    </div>
+    <div class="grid2" style="margin-top:16px">
+      <div class="box"><div class="title"><h2>ABNT básica</h2><span class="tiny">Guia rápido</span></div><div id="abnt-list" class="list"></div></div>
+      <div class="box"><div class="title"><h2>Checklist ABNT</h2><span class="tiny">Conferência</span></div><div id="abnt-checks" class="checks"></div></div>
+    </div>
+  </section>
+
+
+  <section class="panel" data-s="perfil">
+    <div class="grid2">
+      <div class="box">
+        <div class="title"><h2>Perfil e trilha acadêmica</h2><span class="tiny">Personalização local</span></div>
+        <div class="grid2">
+          <div>
+            <label for="pf-level">Nível acadêmico</label>
+            <select id="pf-level" class="sel">
+              <option value="graduacao">Graduação</option>
+              <option value="pos">Pós-graduação</option>
+              <option value="doutorado">Doutorado</option>
+              <option value="posdoc">Pós-doc</option>
+            </select>
+          </div>
+          <div>
+            <label for="pf-phase">Período / fase</label>
+            <input id="pf-phase" class="field" placeholder="Ex.: 3º período, 1º ano, qualificação" />
+          </div>
+        </div>
+        <div class="grid2" style="margin-top:12px">
+          <div>
+            <label for="pf-name">Nome</label>
+            <input id="pf-name" class="field" placeholder="Seu nome" />
+          </div>
+          <div>
+            <label for="pf-inst">Instituição</label>
+            <input id="pf-inst" class="field" placeholder="Sua instituição" />
+          </div>
+        </div>
+        <label style="margin-top:12px" for="pf-focus">Foco atual</label>
+        <textarea id="pf-focus" class="ta" placeholder="Ex.: classificação, indexação, TCC, revisão de literatura, tese..."></textarea>
+        <div class="actions" style="margin-top:12px;grid-template-columns:repeat(auto-fit,minmax(120px,max-content))">
+          <button id="pf-save" class="btn">Salvar perfil</button>
+          <button id="pf-reset-fields" class="ghost">Restaurar padrão</button>
+        </div>
+      </div>
+      <div class="box">
+        <div class="title"><h2>Resumo da trilha</h2><span class="tiny">Orientação por nível</span></div>
+        <div id="pf-summary" class="call"></div>
+        <div class="box" style="margin-top:12px;padding:12px">
+          <div class="title"><h3>Prioridades sugeridas</h3><span class="tiny">Planejamento</span></div>
+          <div id="pf-priorities" class="list"></div>
+        </div>
+      </div>
+    </div>
+    <div class="grid2" style="margin-top:16px">
+      <div class="box">
+        <div class="title"><h2>Backup dos dados</h2><span class="tiny">Exportar e importar</span></div>
+        <p class="small mut">Baixe um arquivo JSON com todos os dados do app: agenda, notas, acervo, links, CDD, pesquisa, mural e perfil.</p>
+        <div class="actions" style="margin-top:12px;grid-template-columns:repeat(auto-fit,minmax(160px,max-content))">
+          <button id="backup-export" class="btn">Exportar backup</button>
+          <label class="tag" style="display:inline-flex;align-items:center;justify-content:center;cursor:pointer;min-height:44px;padding:0 16px">
+            Importar backup
+            <input id="backup-import" type="file" accept="application/json" style="display:none" />
+          </label>
+        </div>
+        <div class="tiny" style="margin-top:10px">Os dados continuam locais neste aparelho/navegador.</div>
+      </div>
+      <div class="box">
+        <div class="title"><h2>Manutenção</h2><span class="tiny">Uso com cuidado</span></div>
+        <p class="small mut">Se quiser reiniciar tudo, limpe os dados locais do SuperApp. Essa ação apaga informações salvas no navegador.</p>
+        <div class="actions" style="margin-top:12px;grid-template-columns:repeat(auto-fit,minmax(160px,max-content))">
+          <button id="app-reset-all" class="danger">Apagar todos os dados</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="panel" data-s="mural">
+    <div class="box">
+      <div class="title"><h2>Nova dica no mural</h2><span class="tiny">Experiências e lembretes</span></div>
+      <div class="grid2"><div><label>Mensagem</label><textarea id="mural-text" class="ta" placeholder="Ex.: criar uma pasta para artigos de representação temática e outra para normas ABNT."></textarea></div><div><label>Etiqueta</label><input id="mural-tag" class="field" placeholder="Organização, ABNT, Leitura" /></div></div>
+      <div class="actions" style="margin-top:12px;grid-template-columns:repeat(auto-fit,minmax(120px,max-content))"><button id="mural-save" class="btn">Publicar</button><button id="mural-clear" class="ghost">Limpar</button><button id="mural-clear-all" class="danger">Limpar mural</button></div>
+    </div>
+    <div class="box" style="margin-top:16px"><div class="title"><h2>Mural</h2><span class="tiny">Uso pessoal/local</span></div><div id="mural-list" class="list"></div></div>
+  </section>
+</main>
+<script>
+(()=>{
+const K={ag:'bef-ag',nt:'bef-nt',it:'bef-it',lk:'bef-lk',mu:'bef-mu',cf:'bef-cf',cr:'bef-cr',sm:'bef-sm',ds:'bef-ds',rs:'bef-rs',rc:'bef-rc',ab:'bef-ab',pf:'bef-pf',sb:'bef-sb'};
+const DFL=[['Google Acadêmico','https://scholar.google.com.br/','Pesquisas acadêmicas e artigos.'],['BDTD','https://bdtd.ibict.br/','Teses e dissertações.'],['Portal CAPES','https://www.periodicos.capes.gov.br/','Periódicos científicos e bases.'],['BRAPCI','https://www.brapci.inf.br/','Artigos em Ciência da Informação.'],['OCLC Dewey','https://www.oclc.org/en/dewey.html','Referência oficial da Dewey.']];
+const CDD=[['000','Informática, informação e obras gerais'],['010','Bibliografias'],['020','Biblioteconomia e ciência da informação'],['021','Relações das bibliotecas, arquivos e centros de informação'],['022','Administração do espaço físico'],['023','Gestão de pessoas'],['024','Não mais usado'],['025','Operações de biblioteca'],['026','Bibliotecas para assuntos específicos'],['027','Bibliotecas gerais'],['028','Leitura e uso de outras mídias de informação'],['029','Não mais usado'],['030','Enciclopédias e obras de referência'],['040','[Não atribuído]'],['050','Periódicos, revistas e séries'],['060','Organizações, associações e museologia'],['070','Mídia noticiosa, jornalismo e editoração'],['080','Citações'],['090','Manuscritos e livros raros'],['100','Filosofia e psicologia'],['110','Metafísica'],['120','Epistemologia, causalidade e gênero humano'],['130','Parapsicologia e ocultismo'],['140','Correntes filosóficas específicas'],['150','Psicologia'],['160','Lógica'],['170','Ética'],['180','Filosofia antiga, medieval e oriental'],['190','Filosofia ocidental moderna'],['200','Religião'],['210','Filosofia e teoria da religião'],['220','Bíblia'],['230','Cristianismo e teologia cristã'],['240','Prática e observância cristãs'],['250','Pastoral cristã e ordens religiosas'],['260','Teologia social e eclesiástica cristã'],['270','História do cristianismo'],['280','Denominações e seitas cristãs'],['290','Outras religiões'],['300','Ciências sociais'],['310','Estatísticas gerais'],['320','Ciência política'],['330','Economia'],['340','Direito'],['350','Administração pública e ciência militar'],['360','Problemas e serviços sociais; associações'],['370','Educação'],['380','Comércio, comunicações e transportes'],['390','Costumes, etiqueta e folclore'],['400','Língua'],['410','Linguística'],['420','Inglês e inglês antigo'],['430','Línguas germânicas; alemão'],['440','Línguas românicas; francês'],['450','Italiano, romeno e línguas relacionadas'],['460','Espanhol, português e galego'],['470','Latim e línguas itálicas'],['480','Grego clássico e línguas helênicas'],['490','Outras línguas'],['500','Ciência'],['510','Matemática'],['520','Astronomia'],['530','Física'],['540','Química'],['550','Ciências da Terra'],['560','Paleontologia; paleozoologia'],['570','Ciências da vida; biologia'],['580','Plantas (botânica)'],['590','Animais (zoologia)'],['600','Tecnologia'],['610','Medicina e saúde'],['620','Engenharia e operações afins'],['630','Agricultura'],['640','Gestão do lar e da família'],['650','Gestão, administração e relações públicas'],['660','Engenharia química'],['670','Manufatura'],['680','Fabricação para usos específicos'],['690','Construção'],['700','Artes e recreação'],['710','Arte cívica e paisagismo'],['720','Arquitetura'],['730','Escultura, cerâmica e metalurgia artística'],['740','Desenho e artes decorativas'],['750','Pintura'],['760','Artes gráficas; gravura e estampas'],['770','Fotografia, arte digital, cinema e vídeo'],['780','Música'],['790','Artes recreativas e cênicas'],['800','Literatura'],['810','Literatura americana em inglês'],['820','Literatura inglesa e anglo-saxônica'],['830','Literatura alemã'],['840','Literatura francesa'],['850','Literatura italiana, romena e rética'],['860','Literatura espanhola e portuguesa'],['870','Literatura latina e itálica'],['880','Literatura grega clássica'],['890','Outras literaturas'],['900','História e geografia'],['910','Geografia e viagens'],['920','Biografia, genealogia e insígnias'],['930','História do mundo antigo'],['940','História da Europa'],['950','História da Ásia'],['960','História da África'],['970','História da América do Norte'],['980','História da América do Sul'],['990','História de outras áreas']];
+const DISC={1:[['Introdução à Biblioteconomia','Campo, profissão e história da área.',['conceito de biblioteca','papel social','campos de atuação']],['Metodologia Científica','Tema, problema e objetivos.',['tema','problema','objetivos']],['Fontes de Informação','Tipos e avaliação de fontes.',['fontes primárias','fontes secundárias','referência']]],2:[['Organização da Informação','Princípios de organização e recuperação.',['organização','recuperação','sistemas']],['Representação Descritiva I','Descrição bibliográfica inicial.',['descrição','autoridade','pontos de acesso']],['Competência em Informação','Busca, avaliação e uso ético.',['busca','avaliação','uso ético']]],3:[['Representação Temática','Assuntos, descritores e linguagens.',['assunto','descritor','vocabulário controlado']],['Classificação','CDD e CDU.',['CDD','CDU','hierarquia temática']],['Catalogação','Noções de padrões catalográficos.',['catálogo','registro','autoridade']]],4:[['Indexação','Análise temática e termos.',['indexação','análise documental','tesauros']],['Desenvolvimento de Coleções','Seleção, aquisição e avaliação.',['política de coleção','seleção','avaliação']],['Normalização Bibliográfica','ABNT e apresentação de trabalhos.',['ABNT','referências','citações']]],5:[['Preservação','Conservação física e digital.',['preservação','conservação','memória']],['Metadados e Repositórios','Dublin Core e interoperabilidade.',['metadados','Dublin Core','OAI-PMH']],['Usuários da Informação','Necessidades e comportamento.',['estudos de usuários','demanda','serviços']]],6:[['Bibliotecas Universitárias','Serviços e apoio à pesquisa.',['bibliotecas especializadas','apoio à pesquisa','serviços']],['Automação de Bibliotecas','Softwares e catálogos online.',['software','automação','catálogo online']],['Pesquisa em Biblioteconomia','Projeto e revisão de literatura.',['artigo','projeto','revisão']]],7:[['Planejamento de TCC','Tema, método e cronograma.',['TCC','cronograma','escopo']],['Gestão de Projetos','Planejamento e indicadores.',['projeto','metas','indicadores']],['Tópicos Avançados','Integração técnica.',['interoperabilidade','padrões','integração']]],8:[['TCC','Escrita e apresentação final.',['escrita científica','banca','resultados']],['Estágio Supervisionado','Teoria e prática profissional.',['rotina profissional','relatório','observação técnica']],['Carreira e Pós-graduação','Currículo e projeto futuro.',['currículo','Lattes','projeto futuro']]]};
+const GLO=[['CDD','Classificação Decimal de Dewey, sistema de organização temática por números.'],['CDU','Classificação Decimal Universal, sistema analítico-sintético de organização do conhecimento.'],['Catalogação','Descrição e representação formal de recursos informacionais.'],['Indexação','Análise temática e atribuição de termos.'],['Classificação','Atribuição de classes para situar um documento em uma estrutura temática.'],['Descritor','Termo controlado que representa assunto.'],['Vocabulário controlado','Conjunto padronizado de termos.'],['Tesauro','Linguagem documentária com relações entre termos.'],['Metadado','Dado que descreve, identifica ou gerencia um recurso.'],['Dublin Core','Padrão simples de metadados muito usado em repositórios.'],['MARC21','Formato legível por máquina para registros bibliográficos.'],['RDA','Padrão de descrição e acesso de recursos informacionais.'],['AACR2','Conjunto anterior de regras de catalogação.'],['OAI-PMH','Protocolo de coleta de metadados.'],['Competência em informação','Capacidade de buscar, avaliar e usar informação adequadamente.'],['Mediação da informação','Ação de aproximar usuários e informação.'],['Lattes','Plataforma brasileira de currículos acadêmicos.'],['ORCID','Identificador digital persistente para pesquisadores.']];
+const ABNT=[['Citação direta curta','Até 3 linhas, no corpo do texto, entre aspas, com autor, ano e página.','Segundo Silva (2020, p. 15), “a organização da informação é central para a mediação do conhecimento”.'],['Citação direta longa','Mais de 3 linhas em bloco destacado, sem aspas.','SILVA, 2020, p. 15. Use bloco recuado, espaçamento simples e destaque visual.'],['Citação indireta','Ideia reescrita por você, com autoria e ano.','A organização da informação é base da mediação do conhecimento (SILVA, 2020).'],['Referência de livro','AUTOR. Título: subtítulo. Edição. Local: Editora, ano.','SILVA, João. Introdução à Biblioteconomia. 2. ed. João Pessoa: Exemplo, 2020.'],['Referência de artigo','AUTOR. Título do artigo. Título do periódico, local, volume, número, páginas, ano.','SILVA, João. Mediação da informação em bibliotecas. Revista Exemplo, João Pessoa, v. 10, n. 2, p. 20-35, 2020.'],['Referência de site','AUTOR/ENTIDADE. Título. Disponível em: URL. Acesso em: dia mês ano.','IBICT. Biblioteca Digital Brasileira de Teses e Dissertações. Disponível em: https://bdtd.ibict.br/. Acesso em: 11 maio 2026.']];
+const ABC=['Conferi autoria em todas as referências.','Padronizei títulos, subtítulos e uso de destaque.','Revisei ano, local e editora quando necessário.','Conferi URLs e data de acesso.','Verifiquei paginação nas citações diretas.','Mantive padrão único de pontuação e maiúsculas.'];
+const RCC=['Defini o tema de pesquisa.','Escrevi uma pergunta clara.','Redigi o objetivo geral.','Escolhi palavras-chave iniciais.','Listei autores e conceitos-base.','Esbocei método ou abordagem.'];
+const QUIZ=['020','025','028','320','340','370','410','510','610','650','720','780','910'];
+const MAP=new Map(CDD); let qcur=null;
+const uid=()=>Date.now()+Math.random().toString(16).slice(2);
+const load=(k,f)=>{try{return JSON.parse(localStorage.getItem(k))??f}catch{return f}};
+const save=(k,v)=>localStorage.setItem(k,JSON.stringify(v));
+const td=(h,m)=>{let d=new Date();d.setDate(d.getDate()+1);d.setHours(h,m,0,0);return d.toISOString().slice(0,16)};
+let S={agenda:load(K.ag,[{id:uid(),t:'Revisar leituras de Organização da Informação',d:td(19,0),n:'Retomar textos-base e registrar conceitos principais.',ok:false}]),notes:load(K.nt,[{id:uid(),t:'Representação temática',b:'Separar conceitos centrais, autores citados em aula e exemplos de indexação para revisar depois.'}]),items:load(K.it,[{id:uid(),t:'Portal de Periódicos CAPES',tp:'Link',u:'https://www.periodicos.capes.gov.br/',c:'020',d:'Fonte útil para pesquisa acadêmica.'}]),links:load(K.lk,[]),mural:load(K.mu,[{id:uid(),t:'Criar uma pasta para artigos de representação temática e outra para normas ABNT.',g:'Organização'}]),cFav:load(K.cf,[]),cRec:load(K.cr,[]),sem:load(K.sm,3),dstat:load(K.ds,{}),research:load(K.rs,{theme:'',title:'',problem:'',objective:'',method:'',keywords:'',notes:''}),rcheck:load(K.rc,{}),abcheck:load(K.ab,{}),profile:load(K.pf,{level:'graduacao',phase:'3º período',name:'Emerson Balbueno Teles',inst:'UFPB',focus:'Classificação, organização da informação e fortalecimento da formação acadêmica.'}),subjects:load(K.sb,[])};
+const esc=t=>String(t??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
+const $=id=>document.getElementById(id);
+const norm=t=>String(t||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
+const fdt=v=>{if(!v)return'Sem data';let d=new Date(v);return isNaN(d)?v:new Intl.DateTimeFormat('pt-BR',{dateStyle:'short',timeStyle:'short'}).format(d)};
+const persist=()=>{save(K.ag,S.agenda);save(K.nt,S.notes);save(K.it,S.items);save(K.lk,S.links);save(K.mu,S.mural);save(K.cf,S.cFav);save(K.cr,S.cRec);save(K.sm,S.sem);save(K.ds,S.dstat);save(K.rs,S.research);save(K.rc,S.rcheck);save(K.ab,S.abcheck);save(K.pf,S.profile);save(K.sb,S.subjects)};
+
+const levelLabel=l=>({graduacao:'Graduação',pos:'Pós-graduação',doutorado:'Doutorado',posdoc:'Pós-doc'}[l]||'Graduação');
+const levelGuide=l=>({
+  graduacao:{summary:'Foco em base conceitual, disciplinas, técnicas de organização da informação, CDD, ABNT e rotina de estudos.',tips:['Consolidar fundamentos de catalogação, classificação e fontes de informação.','Registrar fichamentos por disciplina e montar rotina semanal.','Usar a CDD e o glossário técnico como treino contínuo.']},
+  pos:{summary:'Foco em projeto, revisão de literatura, escrita acadêmica, referências e aprofundamento metodológico.',tips:['Transformar leituras em matriz de revisão de literatura.','Definir problema, objetivos e método de forma enxuta.','Planejar artigos, seminários e produção acadêmica.']},
+  doutorado:{summary:'Foco em tese, base teórica robusta, produção científica, qualificação e gestão avançada da pesquisa.',tips:['Organizar capítulos, artigos e cronograma de qualificação.','Mapear autores centrais, lacunas e contribuições originais.','Usar o painel de pesquisa como núcleo da tese.']},
+  posdoc:{summary:'Foco em projeto avançado, colaboração, impacto científico, supervisão e produção de alto nível.',tips:['Gerenciar projeto, publicações e redes acadêmicas.','Monitorar agenda de submissões, eventos e relatórios.','Usar o app como centro de planejamento e documentação.']}
+}[l]||{summary:'',tips:[]});
+const QUOTES=[
+  {text:'“Books are for use.”',author:'S. R. Ranganathan'},
+  {text:'“The library is a growing organism.”',author:'S. R. Ranganathan'},
+  {text:'“The time is when the library is a school and the librarian in the highest sense a teacher.”',author:'Melvil Dewey'},
+  {text:'“The true essence of librarianship is the maximization of the effective use of graphic records.”',author:'Jesse Hauk Shera'}
+];
+const initials=n=>String(n||'BE').split(/\s+/).filter(Boolean).slice(0,2).map(x=>x[0].toUpperCase()).join('')||'BE';
+const qhtml=q=>`<div class='quote-box'><em>${esc(q.text)}</em><span>${esc(q.author)}</span></div>`;
+function renderQuotes(){
+  const day=(new Date().getDate()+new Date().getMonth())%QUOTES.length;
+  $('home-quote').innerHTML=qhtml(QUOTES[day]);
+  $('formation-quote').innerHTML=qhtml(QUOTES[2]);
+  $('research-quote').innerHTML=qhtml(QUOTES[3]);
+}
+const subjWorks=s=>String((s&&s.works)||'').split('\\n').map(x=>x.trim()).filter(Boolean);
+const nval=v=>{const n=parseFloat(String(v||'').replace(',','.'));return isNaN(n)?null:n};
+function subjectAverage(s){const vals=[nval(s.av1),nval(s.av2),nval(s.workGrade),nval(s.seminar)].filter(v=>v!==null);if(vals.length)return (vals.reduce((a,b)=>a+b,0)/vals.length).toFixed(1);const manual=nval(s.grade);return manual!==null?manual.toFixed(1):'--'}
+const avgGrades=()=>{const vals=(S.subjects||[]).map(subjectAverage).map(v=>parseFloat(v)).filter(v=>!isNaN(v));return vals.length?(vals.reduce((a,b)=>a+b,0)/vals.length).toFixed(1):'--'};
+function upcomingSubjects(){return (S.subjects||[]).filter(s=>s.nextDate).sort((a,b)=>String(a.nextDate).localeCompare(String(b.nextDate)))}
+function clearSubjectForm(){$('subj-id').value='';$('subj-name').value='';$('subj-prof').value='';$('subj-email').value='';$('subj-room').value='';$('subj-link').value='';$('subj-schedule').value='';$('subj-grade').value='';$('subj-absences').value='';$('subj-av1').value='';$('subj-av2').value='';$('subj-workgrade').value='';$('subj-seminar').value='';$('subj-next-date').value='';$('subj-next-task').value='';$('subj-works').value='';$('subj-notes').value=''}
+function editSubject(id){const s=(S.subjects||[]).find(x=>x.id===id);if(!s)return;$('subj-id').value=s.id;$('subj-name').value=s.name||'';$('subj-prof').value=s.prof||'';$('subj-email').value=s.email||'';$('subj-room').value=s.room||'';$('subj-link').value=s.link||'';$('subj-schedule').value=s.schedule||'';$('subj-grade').value=s.grade||'';$('subj-absences').value=s.absences||'';$('subj-av1').value=s.av1||'';$('subj-av2').value=s.av2||'';$('subj-workgrade').value=s.workGrade||'';$('subj-seminar').value=s.seminar||'';$('subj-next-date').value=s.nextDate||'';$('subj-next-task').value=s.nextTask||'';$('subj-works').value=s.works||'';$('subj-notes').value=s.notes||'';show('formacao');window.scrollTo({top:0,behavior:'smooth'})}
+function renderMySubjects(){
+  const list=S.subjects||[];
+  $('my-disc-count').textContent=list.length+' disciplinas';
+  const totalWorks=list.reduce((n,s)=>n+subjWorks(s).length,0);
+  const up=upcomingSubjects();
+  $('period-summary').innerHTML=list.length?`<div class='mini-grid'><div class='mini'><div class='tiny'>Período</div><strong>${esc(S.profile.phase||S.sem+'º período')}</strong></div><div class='mini'><div class='tiny'>Disciplinas</div><strong>${list.length}</strong></div><div class='mini'><div class='tiny'>Média atual</div><strong>${esc(avgGrades())}</strong></div><div class='mini'><div class='tiny'>Trabalhos</div><strong>${totalWorks}</strong></div></div><p class='small mut' style='margin-top:12px'>Use esta área para acompanhar professor, trabalhos, notas, faltas, contatos e prazos de cada disciplina do período.</p>`:`<div class='call'><p class='small mut'>Você ainda não cadastrou suas disciplinas do período atual. Use o formulário ao lado para montar seu semestre real.</p></div>`;
+  $('period-upcoming').innerHTML=up.length?`<div class='quote-box'><em>Próximas entregas e avaliações</em><span>${up.slice(0,3).map(s=>`${s.name}: ${s.nextTask||'atividade'} (${s.nextDate})`).join(' • ')}</span></div>`:'';
+  $('my-disc-list').innerHTML=list.length?list.map(s=>`<div class='item'><div class='title'><div><h3>${esc(s.name)}</h3><div class='tiny'>${esc(s.prof||'Professor(a) não informado')}</div></div><div class='actions' style='grid-template-columns:repeat(auto-fit,minmax(90px,max-content))'><button class='tag sedit' data-id='${s.id}'>Editar</button><button class='danger sdel' data-id='${s.id}'>Excluir</button></div></div><div class='meta'><span class='badge'>Horário: ${esc(s.schedule||'Não informado')}</span><span class='badge'>Média: ${esc(subjectAverage(s))}</span><span class='badge'>Faltas: ${esc(s.absences||'0')}</span>${s.room?`<span class='badge'>Sala: ${esc(s.room)}</span>`:''}</div>${s.email||s.link?`<div class='meta'>${s.email?`<span class='badge'>${esc(s.email)}</span>`:''}${s.link?`<a class='badge' href='${esc(s.link)}' target='_blank' rel='noopener noreferrer'>Abrir link da turma</a>`:''}</div>`:''}${(s.nextTask||s.nextDate)?`<p class='small mut'><strong>Próxima atividade:</strong> ${esc(s.nextTask||'atividade')} ${s.nextDate?`• ${esc(s.nextDate)}`:''}</p>`:''}<div class='meta'>${nval(s.av1)!==null?`<span class='badge'>AV1: ${esc(s.av1)}</span>`:''}${nval(s.av2)!==null?`<span class='badge'>AV2: ${esc(s.av2)}</span>`:''}${nval(s.workGrade)!==null?`<span class='badge'>Trabalho: ${esc(s.workGrade)}</span>`:''}${nval(s.seminar)!==null?`<span class='badge'>Seminário: ${esc(s.seminar)}</span>`:''}${nval(s.grade)!==null?`<span class='badge'>Manual: ${esc(s.grade)}</span>`:''}</div>${subjWorks(s).length?`<ul class='bullets'>${subjWorks(s).map(w=>`<li>${esc(w)}</li>`).join('')}</ul>`:''}${s.notes?`<p class='small mut'>${esc(s.notes)}</p>`:''}</div>`).join(''):`<div class='item'>Nenhuma disciplina cadastrada no período atual.</div>`;
+  document.querySelectorAll('.sedit').forEach(b=>b.onclick=()=>editSubject(b.dataset.id));
+  document.querySelectorAll('.sdel').forEach(b=>b.onclick=()=>{S.subjects=S.subjects.filter(x=>x.id!==b.dataset.id);persist();renderMySubjects();home()});
+}
+function profileRender(){
+  $('pf-level').value=S.profile.level||'graduacao';
+  $('pf-phase').value=S.profile.phase||'';
+  $('pf-name').value=S.profile.name||'';
+  $('pf-inst').value=S.profile.inst||'';
+  $('pf-focus').value=S.profile.focus||'';
+  const g=levelGuide(S.profile.level);
+  $('pf-summary').innerHTML=`<p class='small'><strong>${esc(levelLabel(S.profile.level))}</strong></p><p class='small mut'>${esc(g.summary)}</p><p class='small mut'>Fase atual: ${esc(S.profile.phase||'não definida')}</p><p class='small mut'>Foco: ${esc(S.profile.focus||'não definido')}</p>`;
+  $('pf-priorities').innerHTML=g.tips.map(t=>`<div class='item'><p class='small mut'>${esc(t)}</p></div>`).join('');
+}
+
+function show(p){document.querySelectorAll('.tab').forEach(b=>b.classList.toggle('active',b.dataset.p===p));document.querySelectorAll('.panel').forEach(x=>x.classList.toggle('active',x.dataset.s===p));if(p==='inicio')home();if(p==='formacao')formation();if(p==='agenda')agenda();if(p==='notas')notes();if(p==='acervo')items();if(p==='links')links();if(p==='cdd'){cddFav();cddRec()}if(p==='pesquisa')research();if(p==='perfil')profileRender();if(p==='mural')mural();renderQuotes()}
+document.querySelectorAll('.tab').forEach(b=>b.onclick=()=>show(b.dataset.p));document.querySelectorAll('[data-go]').forEach(b=>b.onclick=()=>show(b.dataset.go));
+function home(){document.getElementById('st-tasks').textContent=S.agenda.filter(x=>!x.ok).length;document.getElementById('st-notes').textContent=S.notes.length;document.getElementById('st-items').textContent=S.items.length;document.getElementById('st-cdd').textContent=S.cFav.length;document.getElementById('st-sem').textContent=S.sem+'º';$('home-avatar').textContent=initials(S.profile.name||'BE');$('home-name').textContent=S.profile.name||'Estudante de Biblioteconomia';$('home-course-line').textContent='Biblioteconomia • '+(S.profile.inst||'Instituição')+' • '+(S.profile.phase||S.sem+'º período');$('home-level').textContent=levelLabel(S.profile.level);$('home-profile-summary').textContent=S.profile.focus||'Defina um foco atual para o seu semestre.';$('home-profile-meta').innerHTML=`<span class='badge'>${esc(levelLabel(S.profile.level))}</span><span class='badge'>${esc(S.profile.inst||'Instituição')}</span><span class='badge'>${esc(S.profile.phase||S.sem+'º período')}</span>`;$('home-level-tip').textContent='Trilha ativa: '+levelGuide(S.profile.level).summary;let nx=[...S.agenda].filter(x=>!x.ok).sort((a,b)=>(a.d||'').localeCompare(b.d||''))[0];document.getElementById('home-next').innerHTML=nx?`<strong>${esc(nx.t)}</strong><p class='small mut'>${esc(fdt(nx.d))}</p><p class='small mut'>${esc(nx.n||'Sem observações adicionais.')}</p>`:`<strong>Nenhum compromisso pendente.</strong><p class='small mut'>Você pode registrar uma nova tarefa na agenda.</p>`;let arr=DISC[S.sem]||[],done=arr.filter((d,i)=>S.dstat['s'+S.sem+'-'+i]==='concluida').length,pct=arr.length?Math.round(done*100/arr.length):0;document.getElementById('home-sem').innerHTML=`<p class='small mut'><strong>${S.sem}º semestre</strong></p><p class='small mut'>${goal(S.sem)}</p><div class='progress'><span style='width:${pct}%'></span></div><p class='tiny' style='margin-top:8px'>${done}/${arr.length} disciplinas marcadas como concluídas.</p>`;let r=S.research;document.getElementById('home-research').innerHTML=r.theme||r.title?`<p class='small mut'><strong>${esc(r.theme||r.title)}</strong></p><p class='small mut'>${esc((r.problem||'Sem problema definido ainda.').slice(0,140))}</p>`:`<p class='small mut'>Nenhum projeto salvo ainda. Use a aba Pesquisa para começar um projeto, TCC ou artigo.</p>`;document.getElementById('home-links').innerHTML=[...DFL.slice(0,2),...S.links.slice(0,2).map(x=>[x.t,x.u,x.g||'Link personalizado'])].map(([t,u,d])=>`<a class='link mini' href='${esc(u)}' target='_blank' rel='noopener noreferrer'><strong>${esc(t)}</strong><span>${esc(d)}</span></a>`).join('');const mine=S.subjects||[];document.getElementById('home-subjects').innerHTML=mine.length?`<div class='mini-grid'>${mine.slice(0,4).map(s=>`<div class='mini'><strong>${esc(s.name)}</strong><div class='tiny'>${esc(s.prof||'Professor(a) não informado')}</div><div class='tiny'>Média: ${esc(subjectAverage(s))} • Trabalhos: ${subjWorks(s).length}</div>${(s.nextTask||s.nextDate)?`<div class='tiny'>Próximo: ${esc(s.nextTask||'atividade')} ${s.nextDate?`• ${esc(s.nextDate)}`:''}</div>`:''}</div>`).join('')}</div><p class='tiny' style='margin-top:10px'>Total: ${mine.length} disciplina(s) • Média atual: ${avgGrades()}</p>`:`<div class='call'><p class='small mut'>Cadastre suas disciplinas reais do ${esc(S.profile.phase||S.sem+'º período')} na aba Formação.</p></div>`}
+const goal=s=>({1:'Construir base conceitual da Biblioteconomia, leitura acadêmica e metodologia científica.',2:'Fortalecer organização da informação, competência em informação e bases tecnológicas.',3:'Aprofundar classificação, catalogação, representação temática e serviços de referência.',4:'Consolidar indexação, coleções, normalização e gestão.',5:'Expandir para preservação, metadados, repositórios e estudos de usuários.',6:'Articular pesquisa, automação e bibliotecas especializadas.',7:'Estruturar TCC, gestão de projetos e integração técnica.',8:'Finalizar TCC, estágio e preparação para carreira e pós-graduação.'}[s]||'Organizar estudos e consolidar competências.');
+function formation(){document.getElementById('sem-select').value=S.sem;document.getElementById('sem-goal').textContent=goal(S.sem);let arr=DISC[S.sem]||[];let done=0,stud=0;document.getElementById('disc-count').textContent=arr.length+' disciplinas';document.getElementById('disc-list').innerHTML=arr.map((d,i)=>{let k='s'+S.sem+'-'+i,st=S.dstat[k]||'pendente';if(st==='concluida')done++;if(st==='estudando')stud++;return `<div class='item'><div class='title'><h3>${esc(d[0])}</h3><span class='badge'>${esc(st==='concluida'?'Concluída':st==='estudando'?'Estudando':'Pendente')}</span></div><p class='small mut'>${esc(d[1])}</p><div class='meta'>${d[2].map(x=>`<span class='badge'>${esc(x)}</span>`).join('')}</div><div class='actions' style='margin-top:12px;grid-template-columns:repeat(auto-fit,minmax(120px,max-content))'><button class='tag dset' data-k='${k}' data-v='pendente'>Pendente</button><button class='tag dset' data-k='${k}' data-v='estudando'>Estudando</button><button class='tag dset' data-k='${k}' data-v='concluida'>Concluída</button></div></div>`}).join('')||`<div class='item'>Sem disciplinas cadastradas.</div>`;let pct=arr.length?Math.round(done*100/arr.length):0;document.getElementById('sem-pct').textContent=pct+'%';document.getElementById('sem-bar').style.width=pct+'%';document.getElementById('sem-meta').textContent=`${done}/${arr.length} concluídas • ${stud} em andamento`;document.querySelectorAll('.dset').forEach(b=>b.onclick=()=>{S.dstat[b.dataset.k]=b.dataset.v;persist();formation();home()});glossary();renderMySubjects()}
+function glossary(){let q=norm(document.getElementById('glossary-q').value.trim());let out=q?GLO.filter(x=>norm(x[0]+' '+x[1]).includes(q)):GLO.slice(0,8);document.getElementById('glossary-list').innerHTML=out.length?out.map(x=>`<div class='item'><h3>${esc(x[0])}</h3><p class='small mut'>${esc(x[1])}</p></div>`).join(''):`<div class='item'>Nenhum termo encontrado.</div>`}
+document.getElementById('sem-select').onchange=e=>{S.sem=+e.target.value;persist();formation();home()};document.getElementById('glossary-btn').onclick=glossary;document.getElementById('glossary-q').onkeydown=e=>{if(e.key==='Enter')glossary()};document.getElementById('subj-save').onclick=()=>{let id=$('subj-id').value,name=$('subj-name').value.trim(),prof=$('subj-prof').value.trim(),email=$('subj-email').value.trim(),room=$('subj-room').value.trim(),link=$('subj-link').value.trim(),schedule=$('subj-schedule').value.trim(),grade=$('subj-grade').value.trim(),absences=$('subj-absences').value.trim(),av1=$('subj-av1').value.trim(),av2=$('subj-av2').value.trim(),workGrade=$('subj-workgrade').value.trim(),seminar=$('subj-seminar').value.trim(),nextDate=$('subj-next-date').value.trim(),nextTask=$('subj-next-task').value.trim(),works=$('subj-works').value.trim(),notes=$('subj-notes').value.trim();if(!name)return alert('Digite o nome da disciplina.');let obj={id:id||uid(),name,prof,email,room,link,schedule,grade,absences,av1,av2,workGrade,seminar,nextDate,nextTask,works,notes,semester:S.sem};S.subjects=id?S.subjects.map(x=>x.id===id?obj:x):[obj,...S.subjects];persist();clearSubjectForm();renderMySubjects();home()};document.getElementById('subj-clear').onclick=clearSubjectForm;
+function agenda(){document.getElementById('ag-open').textContent=S.agenda.filter(x=>!x.ok).length;document.getElementById('ag-done').textContent=S.agenda.filter(x=>x.ok).length;let arr=[...S.agenda].sort((a,b)=>(a.ok-b.ok)||String(a.d||'').localeCompare(String(b.d||'')));document.getElementById('agenda-list').innerHTML=arr.length?arr.map(x=>`<div class='item'><div class='title'><div><h3>${esc(x.t)}</h3><div class='tiny'>${esc(fdt(x.d))}</div></div><span class='status ${x.ok?'ok':'open'}'>${x.ok?'Concluído':'Pendente'}</span></div>${x.n?`<p class='small mut'>${esc(x.n)}</p>`:''}<div class='actions' style='margin-top:12px;grid-template-columns:repeat(auto-fit,minmax(120px,max-content))'><button class='ghost agtoggle' data-id='${x.id}'>${x.ok?'Reabrir':'Concluir'}</button><button class='danger agdel' data-id='${x.id}'>Excluir</button></div></div>`).join(''):`<div class='item'>Nenhum compromisso cadastrado.</div>`;document.querySelectorAll('.agtoggle').forEach(b=>b.onclick=()=>{S.agenda=S.agenda.map(x=>x.id===b.dataset.id?{...x,ok:!x.ok}:x);persist();agenda();home()});document.querySelectorAll('.agdel').forEach(b=>b.onclick=()=>{S.agenda=S.agenda.filter(x=>x.id!==b.dataset.id);persist();agenda();home()})}
+document.getElementById('task-save').onclick=()=>{let t=$('task-title').value.trim(),d=$('task-date').value,n=$('task-note').value.trim();if(!t)return alert('Digite um título.');S.agenda.unshift({id:uid(),t,d,n,ok:false});persist();$('task-title').value=$('task-date').value=$('task-note').value='';agenda();home()};document.getElementById('task-clear').onclick=()=>{$('task-title').value=$('task-date').value=$('task-note').value=''};document.getElementById('ag-clear-done').onclick=()=>{S.agenda=S.agenda.filter(x=>!x.ok);persist();agenda();home()};
+function notes(){document.getElementById('note-count').textContent=S.notes.length+' notas';document.getElementById('notes-list').innerHTML=S.notes.length?S.notes.map(x=>`<div class='item'><div class='title'><h3>${esc(x.t)}</h3><button class='danger ndel' data-id='${x.id}'>Excluir</button></div><p class='small mut' style='white-space:pre-wrap'>${esc(x.b)}</p></div>`).join(''):`<div class='item'>Nenhuma nota criada.</div>`;document.querySelectorAll('.ndel').forEach(b=>b.onclick=()=>{S.notes=S.notes.filter(x=>x.id!==b.dataset.id);persist();notes();home()})}
+document.getElementById('note-save').onclick=()=>{let t=$('note-title').value.trim(),b=$('note-body').value.trim();if(!t)return alert('Digite um título para a nota.');S.notes.unshift({id:uid(),t,b});persist();$('note-title').value=$('note-body').value='';notes();home()};document.getElementById('note-clear').onclick=()=>{$('note-title').value=$('note-body').value=''};
+function items(){document.getElementById('item-count').textContent=S.items.length+' itens';document.getElementById('items-list').innerHTML=S.items.length?S.items.map(x=>`<div class='item'><div class='title'><div><h3>${esc(x.t)}</h3><div class='tiny'>${esc(x.tp)}</div></div><button class='danger idel' data-id='${x.id}'>Excluir</button></div>${x.d?`<p class='small mut'>${esc(x.d)}</p>`:''}<div class='meta'>${x.u?`<a class='badge' href='${esc(x.u)}' target='_blank' rel='noopener noreferrer'>Abrir link</a>`:''}${x.c?`<button class='cchip iopen' data-code='${esc(x.c)}'>CDD ${esc(x.c)}</button>`:''}</div></div>`).join(''):`<div class='item'>Nenhum item no acervo.</div>`;document.querySelectorAll('.idel').forEach(b=>b.onclick=()=>{S.items=S.items.filter(x=>x.id!==b.dataset.id);persist();items();home()});document.querySelectorAll('.iopen').forEach(b=>b.onclick=()=>{show('cdd');$('cdd-code').value=b.dataset.code;renderCDD(searchCDD(b.dataset.code))})}
+document.getElementById('item-save').onclick=()=>{let t=$('item-title').value.trim(),tp=$('item-type').value,c=$('item-cdd').value.trim(),u=$('item-url').value.trim(),d=$('item-desc').value.trim();if(!t)return alert('Digite um título para o item.');S.items.unshift({id:uid(),t,tp,c,u,d});persist();$('item-title').value=$('item-cdd').value=$('item-url').value=$('item-desc').value='';$('item-type').value='Livro';items();home()};document.getElementById('item-clear').onclick=()=>{$('item-title').value=$('item-cdd').value=$('item-url').value=$('item-desc').value='';$('item-type').value='Livro'};
+function links(){document.getElementById('default-links').innerHTML=DFL.map(x=>`<a class='link mini' href='${esc(x[1])}' target='_blank' rel='noopener noreferrer'><strong>${esc(x[0])}</strong><span>${esc(x[2])}</span></a>`).join('');document.getElementById('link-count').textContent=S.links.length+' links';document.getElementById('custom-links').innerHTML=S.links.length?S.links.map(x=>`<div class='item'><div class='title'><div><h3>${esc(x.t)}</h3><div class='tiny'>${esc(x.g||'Sem categoria')}</div></div><button class='danger ldel' data-id='${x.id}'>Excluir</button></div><div class='meta'><a class='badge' href='${esc(x.u)}' target='_blank' rel='noopener noreferrer'>Abrir</a><span class='badge'>${esc(x.u)}</span></div></div>`).join(''):`<div class='item'>Nenhum link personalizado.</div>`;document.querySelectorAll('.ldel').forEach(b=>b.onclick=()=>{S.links=S.links.filter(x=>x.id!==b.dataset.id);persist();links();home()})}
+document.getElementById('link-save').onclick=()=>{let t=$('link-title').value.trim(),g=$('link-tag').value.trim(),u=$('link-url').value.trim();if(!t||!u)return alert('Preencha título e URL.');S.links.unshift({id:uid(),t,g,u});persist();$('link-title').value=$('link-tag').value=$('link-url').value='';links();home()};document.getElementById('link-clear').onclick=()=>{$('link-title').value=$('link-tag').value=$('link-url').value=''};
+const base3=v=>{let i=String(v).trim().replace(',','.').replace(/\s+/g,'').split('.')[0].replace(/\D/g,'');return i.length<3?null:i.slice(0,3)};
+function searchCDD(v){let raw=String(v||'').trim().replace(',','.').replace(/\s+/g,'');if(!raw)return{e:'Digite um número da CDD.'};if(MAP.has(raw))return{s:raw,m:'exact',c:raw,t:MAP.get(raw),h:hier(raw)};let b=base3(raw);if(!b)return{e:'Use pelo menos 3 dígitos, como 020, 370 ou 910.'};let cand=[b,b.slice(0,2)+'0',b[0]+'00'].find(x=>MAP.has(x));return cand?{s:raw,m:raw===cand?'exact':'approx',c:cand,t:MAP.get(cand),h:hier(cand)}:{e:'Esse número não está disponível na base simplificada.'}}
+const hier=c=>[...new Set([c[0]+'00',c.slice(0,2)+'0',c])].filter(x=>MAP.has(x)).map(x=>[x,MAP.get(x)]);
+function renderCDD(r){let box=document.getElementById('cdd-result');if(r.e){box.innerHTML=`<div class='item'><span class='status open'>Aviso</span><p class='small mut'>${esc(r.e)}</p></div>`;return}if(!S.cRec.includes(r.c)){S.cRec=[r.c,...S.cRec].slice(0,12);persist();cddRec()}box.innerHTML=`<div class='item'><span class='badge'>${r.m==='exact'?'Resultado exato':'Classe mais próxima'}</span><div class='title'><div><div class='num'>${esc(r.c)}</div><div class='small'>${esc(r.t)}</div></div><button id='fav-now' class='tag'>${S.cFav.includes(r.c)?'★ Favorito':'☆ Favoritar'}</button></div><p class='small mut'>Consulta: <strong>${esc(r.s)}</strong>${r.m==='approx'?'. O código foi aproximado para a classe cadastrada mais próxima.':''}</p><div class='list' style='margin-top:10px'>${r.h.map(x=>`<div class='mini'><strong>${esc(x[0])}</strong><div class='small mut'>${esc(x[1])}</div></div>`).join('')}</div></div>`;document.getElementById('fav-now').onclick=()=>{S.cFav=S.cFav.includes(r.c)?S.cFav.filter(x=>x!==r.c):[r.c,...S.cFav].slice(0,30);persist();cddFav();home();renderCDD(searchCDD(r.c))}}
+function runCDSubject(){let q=norm($('cdd-subject').value.trim());let out=q?CDD.filter(x=>norm(x[1]).includes(q)).slice(0,12):[];document.getElementById('cdd-subject-list').innerHTML=q?(out.length?out.map(x=>`<div class='item'><div class='title'><div><h3>${esc(x[0])}</h3><div class='tiny'>${esc(x[1])}</div></div><button class='tag suse' data-code='${x[0]}'>Usar</button></div></div>`).join(''):`<div class='item'>Nenhum assunto encontrado.</div>`):`<div class='item'>Digite um termo como biblioteca, educação, música ou religião.</div>`;document.querySelectorAll('.suse').forEach(b=>b.onclick=()=>{$('cdd-code').value=b.dataset.code;renderCDD(searchCDD(b.dataset.code))})}
+function cddMain(){document.getElementById('cdd-main').innerHTML=CDD.filter(x=>x[0].endsWith('00')).map(x=>`<div class='mini'><strong>${esc(x[0])}</strong><div class='small mut'>${esc(x[1])}</div></div>`).join('')}
+function cddFav(){document.getElementById('cdd-favs').innerHTML=S.cFav.length?S.cFav.map(c=>`<div class='item'><div class='title'><div><h3>${esc(c)}</h3><div class='tiny'>${esc(MAP.get(c)||'')}</div></div><div class='actions' style='grid-template-columns:repeat(auto-fit,minmax(90px,max-content))'><button class='tag copen' data-code='${c}'>Abrir</button><button class='danger crem' data-code='${c}'>Remover</button></div></div></div>`).join(''):`<div class='item'>Nenhum favorito salvo.</div>`;document.querySelectorAll('.copen').forEach(b=>b.onclick=()=>{$('cdd-code').value=b.dataset.code;renderCDD(searchCDD(b.dataset.code))});document.querySelectorAll('.crem').forEach(b=>b.onclick=()=>{S.cFav=S.cFav.filter(x=>x!==b.dataset.code);persist();cddFav();home()})}
+function cddRec(){document.getElementById('cdd-recents').innerHTML=S.cRec.length?S.cRec.map(c=>`<div class='item'><div class='title'><div><h3>${esc(c)}</h3><div class='tiny'>${esc(MAP.get(c)||'')}</div></div><button class='tag copen' data-code='${c}'>Abrir</button></div></div>`).join(''):`<div class='item'>Nenhuma consulta recente.</div>`;document.querySelectorAll('#cdd-recents .copen').forEach(b=>b.onclick=()=>{$('cdd-code').value=b.dataset.code;renderCDD(searchCDD(b.dataset.code))})}
+function quiz(){let c=QUIZ[Math.floor(Math.random()*QUIZ.length)],correct=MAP.get(c),opts=[correct,...CDD.filter(x=>x[0]!==c&&x[0].endsWith('0')).sort(()=>Math.random()-.5).slice(0,3)].sort(()=>Math.random()-.5);qcur={c,correct:correct[1]};document.getElementById('quiz-box').innerHTML=`<p class='small mut'><strong>Que assunto corresponde a ${c}?</strong></p><div class='list'>${opts.map(o=>`<button class='ghost qopt' data-sub='${esc(o[1])}'>${esc(o[1])}</button>`).join('')}</div><div id='qres' class='tiny' style='margin-top:10px'></div>`;document.querySelectorAll('.qopt').forEach(b=>b.onclick=()=>{let ok=b.dataset.sub===qcur.correct;document.getElementById('qres').innerHTML=ok?`<span class='status ok'>Correto</span>`:`<span class='status open'>Resposta correta: ${esc(qcur.correct)}</span>`})}
+document.getElementById('cdd-search').onclick=()=>renderCDD(searchCDD($('cdd-code').value));document.getElementById('cdd-code').onkeydown=e=>{if(e.key==='Enter')renderCDD(searchCDD($('cdd-code').value))};document.querySelectorAll('.cdd-sug').forEach(b=>b.onclick=()=>{$('cdd-code').value=b.dataset.code;renderCDD(searchCDD(b.dataset.code))});document.getElementById('cdd-subject-btn').onclick=runCDSubject;document.getElementById('cdd-subject').onkeydown=e=>{if(e.key==='Enter')runCDSubject()};document.getElementById('cdd-clear-fav').onclick=()=>{S.cFav=[];persist();cddFav();home()};document.getElementById('cdd-clear-rec').onclick=()=>{S.cRec=[];persist();cddRec()};document.getElementById('quiz-new').onclick=quiz;
+function research(){let r=S.research;$('res-theme').value=r.theme||'';$('res-title').value=r.title||'';$('res-problem').value=r.problem||'';$('res-objective').value=r.objective||'';$('res-method').value=r.method||'';$('res-keywords').value=r.keywords||'';$('res-notes').value=r.notes||'';document.getElementById('res-summary').innerHTML=r.theme||r.title?`<div class='call'><p class='small'><strong>${esc(r.title||r.theme)}</strong></p><p class='small mut'>Tema: ${esc(r.theme||'Não definido')}</p><p class='small mut'>Problema: ${esc((r.problem||'Não definido').slice(0,220))}</p><p class='small mut'>Objetivo: ${esc((r.objective||'Não definido').slice(0,220))}</p><div class='meta'><span class='badge'>${esc(r.method||'Método não definido')}</span><span class='badge'>${esc(r.keywords||'Sem palavras-chave')}</span></div></div>`:`<div class='call'><p class='small mut'>Nenhum projeto salvo ainda. Use esta área para começar TCC, artigo ou projeto de pesquisa.</p></div>`;document.getElementById('res-checks').innerHTML=RCC.map((x,i)=>`<label class='check'><input type='checkbox' class='rck' data-i='${i}' ${S.rcheck[i]?'checked':''}><span class='small'>${esc(x)}</span></label>`).join('');document.querySelectorAll('.rck').forEach(b=>b.onchange=()=>{S.rcheck[b.dataset.i]=b.checked;persist()});document.getElementById('abnt-list').innerHTML=ABNT.map(x=>`<div class='item'><h3>${esc(x[0])}</h3><p class='small mut'>${esc(x[1])}</p><div class='mono'>${esc(x[2])}</div></div>`).join('');document.getElementById('abnt-checks').innerHTML=ABC.map((x,i)=>`<label class='check'><input type='checkbox' class='abk' data-i='${i}' ${S.abcheck[i]?'checked':''}><span class='small'>${esc(x)}</span></label>`).join('');document.querySelectorAll('.abk').forEach(b=>b.onchange=()=>{S.abcheck[b.dataset.i]=b.checked;persist()})}
+document.getElementById('res-save').onclick=()=>{S.research={theme:$('res-theme').value.trim(),title:$('res-title').value.trim(),problem:$('res-problem').value.trim(),objective:$('res-objective').value.trim(),method:$('res-method').value.trim(),keywords:$('res-keywords').value.trim(),notes:$('res-notes').value.trim()};persist();research();home()};document.getElementById('res-clear').onclick=()=>{$('res-theme').value=$('res-title').value=$('res-problem').value=$('res-objective').value=$('res-method').value=$('res-keywords').value=$('res-notes').value=''};
+function mural(){document.getElementById('mural-list').innerHTML=S.mural.length?S.mural.map(x=>`<div class='item'><div class='title'><div><h3>${esc(x.g||'Dica')}</h3><div class='tiny'>Mural pessoal</div></div><button class='danger mdel' data-id='${x.id}'>Excluir</button></div><p class='small mut'>${esc(x.t)}</p></div>`).join(''):`<div class='item'>Nenhuma dica no mural.</div>`;document.querySelectorAll('.mdel').forEach(b=>b.onclick=()=>{S.mural=S.mural.filter(x=>x.id!==b.dataset.id);persist();mural()})}
+
+document.getElementById('pf-save').onclick=()=>{S.profile={level:$('pf-level').value,phase:$('pf-phase').value.trim(),name:$('pf-name').value.trim(),inst:$('pf-inst').value.trim(),focus:$('pf-focus').value.trim()};persist();profileRender();home()};
+document.getElementById('pf-reset-fields').onclick=()=>{S.profile={level:'graduacao',phase:'3º período',name:'Emerson Balbueno Teles',inst:'UFPB',focus:'Classificação, organização da informação e fortalecimento da formação acadêmica.'};persist();profileRender();home()};
+document.getElementById('backup-export').onclick=()=>{const payload={exportedAt:new Date().toISOString(),app:'BiblioEmerson SuperApp Final',data:S};const blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='biblioemerson-superapp-backup.json';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),500)};
+document.getElementById('backup-import').onchange=async(e)=>{const file=e.target.files&&e.target.files[0];if(!file)return;try{const txt=await file.text();const parsed=JSON.parse(txt);if(!parsed.data)throw new Error('Formato inválido');S={...S,...parsed.data};persist();home();formation();agenda();notes();items();links();cddMain();renderCDD({e:'Backup importado com sucesso. Faça uma nova consulta quando quiser.'});runCDSubject();cddFav();cddRec();quiz();research();profileRender();renderQuotes();renderMySubjects();mural();alert('Backup importado com sucesso.')}catch(err){alert('Não foi possível importar o backup.')}};
+document.getElementById('app-reset-all').onclick=()=>{if(!confirm('Tem certeza? Isso apaga todos os dados salvos localmente neste navegador.'))return;Object.values(K).forEach(k=>localStorage.removeItem(k));location.reload()};
+
+document.getElementById('mural-save').onclick=()=>{let t=$('mural-text').value.trim(),g=$('mural-tag').value.trim();if(!t)return alert('Digite a mensagem da dica.');S.mural.unshift({id:uid(),t,g});persist();$('mural-text').value=$('mural-tag').value='';mural()};document.getElementById('mural-clear').onclick=()=>{$('mural-text').value=$('mural-tag').value=''};document.getElementById('mural-clear-all').onclick=()=>{S.mural=[];persist();mural()};
+function init(){home();formation();agenda();notes();items();links();cddMain();renderCDD({e:'Digite um código para consultar.'});runCDSubject();cddFav();cddRec();quiz();research();profileRender();renderQuotes();renderMySubjects();mural()}init();
+})();
+</script>
+
+<script>
+(() => {
+  const installBtn = document.getElementById('install-app-btn');
+  const installStatus = document.getElementById('install-app-status');
+  let deferredPrompt = null;
+
+  const isStandalone = () => window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+
+  function setInstallMessage(message) {
+    if (installStatus) installStatus.textContent = message;
+  }
+
+  if (installBtn) {
+    installBtn.addEventListener('click', async () => {
+      if (isStandalone()) {
+        setInstallMessage('O app já está instalado neste aparelho.');
+        return;
+      }
+      if (deferredPrompt) {
+        deferredPrompt.prompt();
+        const choice = await deferredPrompt.userChoice;
+        setInstallMessage(choice.outcome === 'accepted' ? 'Instalação iniciada. Veja o app na tela inicial.' : 'Instalação cancelada. Você pode tentar novamente depois.');
+        deferredPrompt = null;
+      } else {
+        setInstallMessage('Se o botão não instalar, use o menu do Chrome: ⋮ > Instalar app ou Adicionar à tela inicial.');
+      }
+    });
+  }
+
+  window.addEventListener('beforeinstallprompt', (event) => {
+    event.preventDefault();
+    deferredPrompt = event;
+    setInstallMessage('Pronto para instalar. Toque no botão “Instalar no Android”.');
+  });
+
+  window.addEventListener('appinstalled', () => {
+    deferredPrompt = null;
+    setInstallMessage('App instalado com sucesso no Android.');
+  });
+
+  if ('serviceWorker' in navigator) {
+    if (location.protocol === 'http:' || location.protocol === 'https:') {
+      navigator.serviceWorker.register('./sw.js').then(() => {
+        if (isStandalone()) setInstallMessage('App aberto em modo instalado.');
+        else setInstallMessage('App pronto para uso offline. Para instalar, use o botão ou o menu do navegador.');
+      }).catch(() => {
+        setInstallMessage('Não foi possível ativar o modo offline.');
+      });
+    } else {
+      setInstallMessage('Abrir arquivo local no celular nem sempre funciona. Publique esta pasta em um link HTTPS para instalar.');
+    }
+  }
+})();
+</script>
+
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9fa2a8e01a0f27e9',t:'MTc3ODUxNzk4NQ=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
