@@ -2,7 +2,7 @@
   "name": "BiblioEmerson SuperApp",
   "short_name": "BiblioEmerson",
   "description": "SuperApp de Biblioteconomia com formação, disciplinas, CDD, pesquisa, ABNT e rotina acadêmica.",
-  "start_url": "./index.html",
+  "start_url": "./",
   "scope": "./",
   "display": "standalone",
   "orientation": "portrait",
@@ -26,5 +26,6 @@
       "type": "image/png",
       "purpose": "any maskable"
     }
-  ]
+  ],
+  "id": "./"
 }
