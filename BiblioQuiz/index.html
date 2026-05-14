@@ -3,136 +3,164 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BiblioQuiz: A Odisseia do Conhecimento</title>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <title>BiblioQuiz: Scientific Environment</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Lora:ital,wght@0,400;1,700&display=swap" rel="stylesheet">
     <style>
-        :root { --lilac: #9b59b6; --gold: #d4af37; --parchment: #f2e8c9; --marrom: #5d4037; }
-        body, html { margin: 0; padding: 0; height: 100%; font-family: 'Cinzel', serif; overflow: hidden; background: #1a1a1a; }
-        #viewport {
-            width: 100vw; height: 100vh; display: flex; align-items: center; justify-content: center;
-            background-image: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('https://images.unsplash.com/photo-1507842217343-583bb7270b66?auto=format&fit=crop&q=80&w=2000');
-            background-size: cover; transition: 2s;
+        :root { 
+            --catalog: #9b59b6; --hist: #d4af37; --epi: #800020; 
+            --parchment: #f9f4e8; --ink: #2c3e50; 
         }
-        .hud { position: absolute; top: 20px; width: 90%; display: flex; justify-content: space-between; color: white; z-index: 10; }
-        .timer { width: 60px; height: 60px; border: 3px solid var(--gold); border-radius: 50%; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.8); font-weight: bold; }
-        .card { width: 350px; min-height: 500px; background: var(--parchment); border-radius: 15px; border: 5px solid var(--gold); padding: 25px; box-shadow: 0 20px 50px rgba(0,0,0,0.9); box-sizing: border-box; }
-        .level-tag { background: var(--marrom); color: var(--gold); padding: 5px 10px; border-radius: 5px; font-size: 0.8rem; margin-bottom: 10px; display: inline-block; }
-        .persona { font-style: italic; font-weight: bold; border-bottom: 2px solid var(--gold); margin-bottom: 15px; color: var(--marrom); }
-        .option { background: rgba(255,255,255,0.7); border: 1px solid #ccc; padding: 12px; margin: 8px 0; border-radius: 8px; cursor: pointer; transition: 0.3s; font-size: 0.9rem; }
-        .option:hover { background: var(--lilac); color: white; transform: scale(1.02); }
-        .curiosity { font-size: 0.75rem; color: #666; margin-top: 20px; border-top: 1px dashed #aaa; padding-top: 10px; font-style: italic; }
-        .surprise-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); color: var(--gold); display: none; flex-direction: column; align-items: center; justify-content: center; text-align: center; z-index: 20; padding: 20px; border-radius: 10px; }
+        body, html { margin: 0; padding: 0; height: 100%; font-family: 'Lora', serif; background: #0a0a0a; overflow: hidden; }
+        
+        #app-container { 
+            width: 100vw; height: 100vh; display: flex; align-items: center; justify-content: center; 
+            transition: background 1.5s ease-in-out; background-size: cover; background-position: center;
+        }
+
+        /* Menu Profissional */
+        #menu { background: var(--parchment); padding: 50px; border: 5px double var(--ink); text-align: center; box-shadow: 0 0 100px rgba(0,0,0,0.9); z-index: 10; }
+        .btn-level { 
+            display: block; width: 280px; padding: 18px; margin: 15px auto; 
+            font-family: 'Cinzel', serif; font-size: 1rem; cursor: pointer; 
+            transition: 0.4s; background: white; border: 2px solid var(--ink); 
+        }
+        .btn-level:hover { background: var(--ink); color: white; transform: translateY(-3px); }
+
+        /* Card de Elite */
+        .card { 
+            width: 420px; min-height: 580px; background: var(--parchment); 
+            border-radius: 4px; padding: 35px; display: none; position: relative; 
+            box-shadow: 0 30px 60px rgba(0,0,0,0.7); box-sizing: border-box;
+        }
+        .subject-tag { 
+            position: absolute; top: -15px; right: 20px; padding: 8px 15px; 
+            color: white; font-family: 'Cinzel'; font-size: 0.7rem; border-radius: 3px; 
+        }
+        .persona-name { font-family: 'Cinzel'; font-size: 1.1rem; margin-top: 10px; }
+        .persona-speech { font-style: italic; color: #555; border-left: 3px solid var(--ink); padding-left: 15px; margin: 20px 0; font-size: 0.95rem; }
+        .question-text { font-weight: bold; font-size: 1.2rem; margin-bottom: 25px; line-height: 1.4; }
+        
+        .option { 
+            padding: 14px; border: 1px solid #ccc; margin-bottom: 12px; 
+            border-radius: 4px; cursor: pointer; transition: 0.2s; background: rgba(255,255,255,0.5);
+        }
+        .option:hover { background: white; border-color: var(--ink); box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
+
+        /* Estilos de Feedback */
+        #feedback { display: none; margin-top: 20px; animation: fadeIn 0.5s; }
+        .source-btn { 
+            display: block; margin-top: 15px; color: var(--epi); 
+            text-decoration: none; font-weight: bold; font-size: 0.85rem; 
+        }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     </style>
 </head>
 <body>
-    <div class="hud">
-        <div>Nível: <span id="level-txt">Graduação</span><br>Pontos: <span id="score">0</span></div>
-        <div class="timer" id="timer">30</div>
+
+<div id="app-container">
+    <div id="menu">
+        <h1 style="font-family: 'Cinzel'; margin-bottom: 5px;">BiblioQuiz Pro</h1>
+        <p style="font-size: 0.8rem; letter-spacing: 2px; margin-bottom: 30px;">PLATAFORMA ACADÊMICA DE AUTOAVALIAÇÃO</p>
+        <button class="btn-level" onclick="startGame('graduacao')">Nível I: Graduação</button>
+        <button class="btn-level" onclick="startGame('mestrado')">Nível II: Mestrado</button>
+        <button class="btn-level" onclick="startGame('doutorado')">Nível III: Doutorado</button>
     </div>
-    <div id="viewport">
-        <div class="card">
-            <div id="surprise-box" class="surprise-overlay"></div>
-            <div class="level-tag" id="difficulty">MÉDIO</div>
-            <div id="persona" class="persona">Carregando...</div>
-            <div id="q-text" style="font-weight: bold; margin-bottom: 15px;">Aguarde...</div>
+
+    <div id="game-area" style="display:none;">
+        <div class="card" id="main-card">
+            <div id="subject" class="subject-tag"></div>
+            <div id="persona-name" class="persona-name"></div>
+            <div id="persona-dialog" class="persona-speech"></div>
+            <div id="question" class="question-text"></div>
             <div id="options"></div>
-            <div id="curiosity" class="curiosity"></div>
+            
+            <div id="feedback">
+                <div id="feedback-msg" style="padding: 15px; border-radius: 4px;"></div>
+                <a id="source-url" class="source-btn" target="_blank">📄 Acessar Documentação Científica</a>
+                <button class="btn-level" style="width:100%; margin-top:20px;" onclick="nextQuestion()">Próxima Carta</button>
+            </div>
         </div>
     </div>
+</div>
 
-    <script>
-        let score = 0, currentIdx = 0, level = "Graduação", timeLeft = 30, timer;
+<audio id="snd-flip" src="https://www.soundjay.com/misc/sounds/page-flip-01a.mp3"></audio>
 
-        const banco = [
-            // GRADUAÇÃO
-            { lvl: "Graduação", dif: "Médio", p: "Ranganathan pergunta:", q: "Qual a 2ª Lei da Biblioteconomia?", o: ["Livros para uso", "A cada leitor seu livro", "Poupe o tempo", "Organismo em crescimento"], a: 1, c: "Significa que a biblioteca deve atender a todos, sem distinção.", r: "Fonte: Ranganathan (1931)." },
-            { lvl: "Graduação", dif: "Difícil", p: "Cutter pergunta:", q: "Na Tabela Cutter, a letra inicial seguida de números serve para:", o: ["Classificar o assunto", "Individualizar o autor", "Definir o ano", "Indicar a editora"], a: 1, c: "Cutter criou isso para evitar que livros do mesmo assunto fiquem desordenados.", r: "Fonte: Tabela Cutter-Sanborn." },
-            { lvl: "Graduação", dif: "Muito Difícil", p: "Mey pergunta:", q: "O campo MARC 245 subcampo $c refere-se a:", o: ["Título principal", "Título variante", "Indicação de responsabilidade", "Edição"], a: 2, c: "É onde colocamos os autores e colaboradores do item.", r: "Fonte: MARC 21 Formato Bibliográfico." },
-            
-            // MESTRADO
-            { lvl: "Mestrado", dif: "Difícil", p: "Paul Otlet pergunta:", q: "O conceito de 'Monográfico' no Tratado de Documentação refere-se a:", o: ["Apenas livros", "Unidade de informação processada", "Ficção científica", "Manuscritos"], a: 1, c: "Otlet via o documento como algo que ultrapassa o papel.", r: "Fonte: Otlet (1934)." },
-            
-            // DOUTORADO
-            { lvl: "Doutorado", dif: "Muito Difícil", p: "Saracevic pergunta:", q: "Na Ciência da Informação, a 'Relevância' é considerada um conceito:", o: ["Estático", "Puramente matemático", "Multidimensional e dinâmico", "Irrelevante"], a: 2, c: "A relevância depende do contexto do usuário e do momento da busca.", r: "Fonte: Saracevic (1996)." }
-        ];
+<script>
+    const bgs = {
+        graduacao: "url('https://images.unsplash.com/photo-1481627834876-b7833e8f5570?q=80&w=2000')",
+        mestrado: "url('https://images.unsplash.com/photo-1441986300917-64674bd600d8?q=80&w=2000')",
+        doutorado: "url('https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?q=80&w=2000')"
+    };
 
-        const surpresas = [
-            { tipo: "ruim", msg: "Você está falando muito nas aulas! Fique uma vez sem jogar.", efeito: -15, icon: "🚫" },
-            { tipo: "bom", msg: "Você achou um manuscrito raro na Biblioteca de Alexandria!", efeito: 30, icon: "📜" },
-            { tipo: "ruim", msg: "Sua devolução está atrasada! Perca 10 pontos.", efeito: -10, icon: "⏳" },
-            { tipo: "bom", msg: "Você publicou um artigo no Periódico CAPES! +25 pontos.", efeito: 25, icon: "🎓" }
-        ];
+    const database = {
+        graduacao: [
+            { s: "Catalogação", c: "#9b59b6", p: "Antônio Garcia Miranda", d: "A representação descritiva é a base do acesso. Você conhece os pilares?", q: "Qual a função primordial do Formato MARC 21?", o: ["Organizar livros na estante física", "Padronizar o intercâmbio de dados bibliográficos", "Substituir a Tabela Cutter", "Gerar o ISBN automaticamente"], a: 1, f: "https://www.loc.gov/marc/bibliographic/" },
+            { s: "História", c: "#d4af37", p: "Calímaco", d: "Em Alexandria, o conhecimento tinha um endereço. Qual era o seu mapa?", q: "Os 'Pinakes' de Calímaco são considerados o quê na história?", o: ["O primeiro catálogo de biblioteca", "Um manual de conservação", "Uma lista de funcionários", "Um livro de leis egípcias"], a: 0, f: "https://pt.wikipedia.org/wiki/Pinakes" }
+        ],
+        mestrado: [
+            { s: "Informação", c: "#800020", p: "Paul Otlet", d: "Minha visão era uma rede mundial de cooperação documental. Você entende a essência?", q: "A Classificação Decimal Universal (CDD) inovou ao permitir:", o: ["Apenas números inteiros", "Sinais de relação e facetas", "Uso exclusivo em bibliotecas públicas", "A extinção dos catálogos"], a: 1, f: "https://udcc.org/index.php/site/page?view=about" }
+        ]
+    };
 
-        function startTimer() {
-            clearInterval(timer);
-            timeLeft = 30;
-            timer = setInterval(() => {
-                timeLeft--;
-                document.getElementById('timer').innerText = timeLeft;
-                if(timeLeft <= 0) { clearInterval(timer); next(); }
-            }, 1000);
+    let currentLvl = '';
+    let currentIdx = 0;
+
+    function startGame(lvl) {
+        currentLvl = lvl;
+        document.getElementById('app-container').style.background = bgs[lvl];
+        document.getElementById('menu').style.display = 'none';
+        document.getElementById('game-area').style.display = 'flex';
+        loadQuestion();
+    }
+
+    function loadQuestion() {
+        const data = database[currentLvl][currentIdx];
+        const card = document.getElementById('main-card');
+        document.getElementById('snd-flip').play();
+        
+        card.style.display = 'block';
+        card.style.borderColor = data.c;
+        document.getElementById('subject').innerText = data.s;
+        document.getElementById('subject').style.background = data.c;
+        document.getElementById('persona-name').innerText = data.p;
+        document.getElementById('persona-dialog').innerText = `"${data.d}"`;
+        document.getElementById('question').innerText = data.q;
+        document.getElementById('feedback').style.display = 'none';
+        
+        const opts = document.getElementById('options');
+        opts.innerHTML = '';
+        opts.style.display = 'block';
+        data.o.forEach((opt, i) => {
+            const b = document.createElement('div');
+            b.className = 'option';
+            b.innerText = opt;
+            b.onclick = () => {
+                opts.style.display = 'none';
+                const f = document.getElementById('feedback');
+                const m = document.getElementById('feedback-msg');
+                f.style.display = 'block';
+                if(i === data.a) {
+                    m.innerHTML = "✅ <strong>PRECISÃO ACADÊMICA.</strong> O especialista valida seu conhecimento.";
+                    m.style.background = "#d4edda";
+                } else {
+                    m.innerHTML = "❌ <strong>LACUNA DE INFORMAÇÃO.</strong> Recomenda-se revisão da literatura citada.";
+                    m.style.background = "#f8d7da";
+                }
+                document.getElementById('source-url').href = data.f;
+            };
+            opts.appendChild(b);
+        });
+    }
+
+    function nextQuestion() {
+        currentIdx++;
+        if(database[currentLvl] && currentIdx < database[currentLvl].length) {
+            loadQuestion();
+        } else {
+            alert("Ciclo concluído. Sua jornada acadêmica continua.");
+            location.reload();
         }
-
-        function load() {
-            const data = banco[currentIdx];
-            document.getElementById('level-txt').innerText = data.lvl;
-            document.getElementById('difficulty').innerText = data.dif;
-            document.getElementById('persona').innerText = data.p;
-            document.getElementById('q-text').innerText = data.q;
-            document.getElementById('curiosity').innerText = "Curiosidade: " + data.c;
-            
-            const opts = document.getElementById('options');
-            opts.innerHTML = '';
-            data.o.forEach((opt, i) => {
-                const btn = document.createElement('div');
-                btn.className = 'option';
-                btn.innerText = opt;
-                btn.onclick = () => check(i);
-                opts.appendChild(btn);
-            });
-            startTimer();
-        }
-
-        function check(i) {
-            if(i === banco[currentIdx].a) {
-                score += 15;
-                alert("Correto! Suas fontes são confiáveis.");
-            } else {
-                score -= 5;
-                alert("Erro de catalogação! Verifique suas fontes.");
-            }
-            document.getElementById('score').innerText = score;
-            
-            // Trigger de carta surpresa a cada 2 questões
-            if(currentIdx % 2 === 1) triggerSurprise();
-            else next();
-        }
-
-        function triggerSurprise() {
-            const s = surpresas[Math.floor(Math.random() * surpresas.length)];
-            const box = document.getElementById('surprise-box');
-            box.innerHTML = `<h1>${s.icon}</h1><p>${s.msg}</p><button onclick="closeSurprise()" style="padding:10px; background:var(--gold); border:none; border-radius:5px; cursor:pointer;">Continuar Jornada</button>`;
-            box.style.display = 'flex';
-            score += s.efeito;
-            document.getElementById('score').innerText = score;
-        }
-
-        function closeSurprise() {
-            document.getElementById('surprise-box').style.display = 'none';
-            next();
-        }
-
-        function next() {
-            currentIdx++;
-            if(currentIdx >= banco.length) {
-                alert("Você completou a Odisseia! Pontuação: " + score);
-                currentIdx = 0;
-                score = 0;
-            }
-            load();
-        }
-
-        window.onload = load;
-    </script>
+    }
+</script>
 </body>
 </html>
