@@ -3,151 +3,114 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>BiblioQuiz UFPB</title>
+    <title>BiblioQuiz vFinal</title>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Lora&display=swap" rel="stylesheet">
     <style>
         :root { --gold: #d4af37; --ink: #1a1a1a; --burgundy: #630d0d; --paper: #fdfaf3; }
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        body { margin: 0; font-family: 'Lora', serif; background: #000; color: var(--ink); height: 100vh; display: flex; align-items: center; justify-content: center; overflow: hidden; }
-
-        /* FUNDO DE BIBLIOTECA */
-        .bg-overlay { position: fixed; inset: 0; background: url('https://images.unsplash.com/photo-1507842217343-583bb7270b66?q=80&w=2000') center/cover; opacity: 0.4; z-index: -1; }
-
-        /* TELA DE CONFIGURAÇÃO (O que aparece na sua imagem) */
-        #config-screen, #game-screen { 
-            background: var(--paper); width: 90%; max-width: 400px; padding: 25px; 
-            border: 2px solid var(--gold); border-radius: 4px; text-align: center; 
-            box-shadow: 0 10px 40px rgba(0,0,0,0.5); 
-        }
-
-        #game-screen { display: none; text-align: left; }
-
-        h2 { font-family: 'Cinzel'; color: var(--burgundy); margin-top: 0; font-size: 1.2rem; }
-        .btn { 
-            width: 100%; padding: 12px; margin: 5px 0; border: 1px solid var(--ink); 
-            background: white; font-family: 'Cinzel'; cursor: pointer; transition: 0.2s;
-        }
-        .btn.active { background: var(--gold); color: white; border-color: white; }
-        .btn-start { background: var(--burgundy); color: white; margin-top: 15px; font-weight: bold; display: none; }
-
-        /* INTERFACE DE JOGO */
-        .hud { display: flex; justify-content: space-between; font-family: 'Cinzel'; font-size: 0.7rem; border-bottom: 1px solid #ccc; padding-bottom: 10px; margin-bottom: 15px; }
-        .question { font-weight: bold; margin-bottom: 20px; font-size: 0.95rem; line-height: 1.4; }
+        body { margin: 0; font-family: 'Lora', serif; background: #000; height: 100vh; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+        .bg { position: fixed; inset: 0; background: url('https://images.unsplash.com/photo-1507842217343-583bb7270b66?q=80&w=2000') center/cover; opacity: 0.3; z-index: -1; }
         
-        /* MODAL RÁPIDO */
-        #feedback { 
-            display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.9); 
-            z-index: 10; align-items: center; justify-content: center; padding: 20px;
-        }
+        /* TELAS */
+        .card { background: var(--paper); width: 92%; max-width: 380px; padding: 25px; border: 2px solid var(--gold); text-align: center; box-shadow: 0 10px 40px #000; position: relative; z-index: 10; }
+        .hidden { display: none !important; }
+
+        h2 { font-family: 'Cinzel'; color: var(--burgundy); font-size: 1.1rem; margin-bottom: 20px; }
+        .btn { width: 100%; padding: 14px; margin: 4px 0; border: 1px solid var(--ink); background: #fff; font-family: 'Cinzel'; cursor: pointer; font-size: 0.8rem; }
+        .btn.active { background: var(--gold); color: #fff; border-color: #fff; }
+        .btn-go { background: var(--burgundy); color: #fff; font-weight: bold; margin-top: 15px; display: none; }
+        
+        /* JOGO */
+        .q-text { font-weight: bold; text-align: left; margin: 20px 0; font-size: 0.9rem; line-height: 1.4; }
+        .hud { display: flex; justify-content: space-between; font-family: 'Cinzel'; font-size: 0.65rem; border-bottom: 1px solid #ccc; padding-bottom: 8px; margin-bottom: 15px; }
     </style>
 </head>
 <body>
-    <div class="bg-overlay"></div>
+    <div class="bg"></div>
 
-    <!-- TELA QUE VOCÊ ESTÁ VENDO NO PRINT -->
-    <div id="config-screen">
+    <!-- TELA INICIAL (Sincronizada com seu print) -->
+    <div id="screen-config" class="card">
         <h2>PORTAL DE PESQUISA</h2>
-        <p style="font-size: 0.8rem;">Selecione o nível e o modo para começar.</p>
-        
-        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 5px;">
-            <button class="btn btn-lvl" onclick="pick('lvl', 'graduacao', this)">GRAD</button>
-            <button class="btn btn-lvl" onclick="pick('lvl', 'mestrado', this)">MESTR</button>
-            <button class="btn btn-lvl" onclick="pick('lvl', 'doutorado', this)">DOUT</button>
+        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 4px;">
+            <button class="btn b-lvl" onclick="setVal('lvl', 'graduacao', this)">GRAD</button>
+            <button class="btn b-lvl" onclick="setVal('lvl', 'mestrado', this)">MESTR</button>
+            <button class="btn b-lvl" onclick="setVal('lvl', 'doutorado', this)">DOUT</button>
         </div>
-
-        <div style="margin-top: 15px;">
-            <button class="btn btn-mode" onclick="pick('mode', 'solo', this)">SOLO VS CPU</button>
-            <button class="btn btn-mode" onclick="pick('mode', 'p2', this)">DUELO (P2)</button>
+        <div style="margin-top: 12px;">
+            <button class="btn b-mod" onclick="setVal('mode', 'solo', this)">SOLO VS CPU</button>
+            <button class="btn b-mod" onclick="setVal('mode', 'p2', this)">DUELO (P2)</button>
         </div>
-
-        <button id="go-btn" class="btn btn-start" onclick="start()">INICIAR CICLO</button>
+        <button id="btn-start" class="btn btn-go" onclick="runGame()">INICIAR CICLO</button>
     </div>
 
-    <!-- TELA DE JOGO REAL -->
-    <div id="game-screen">
+    <!-- TELA DE QUESTÕES -->
+    <div id="screen-game" class="card hidden">
         <div class="hud">
-            <span id="score">P1: 0</span>
-            <span id="turn">VEZ DO P1</span>
+            <span id="txt-score">P1: 0</span>
+            <span id="txt-turn" style="color:var(--burgundy)">VEZ DO P1</span>
         </div>
-        <div id="game-content">
-            <div id="q-text" class="question"></div>
-            <div id="options"></div>
-        </div>
-    </div>
-
-    <div id="feedback">
-        <div style="background:white; padding:30px; text-align:center; border:3px solid var(--gold); width:100%; max-width:300px;">
-            <h3 id="f-title" style="font-family:'Cinzel';"></h3>
-            <p id="f-msg" style="font-size:0.9rem; margin: 15px 0;"></p>
-            <button class="btn" onclick="nextQ()">CONTINUAR</button>
+        <div id="q-box">
+            <div id="display-q" class="q-text"></div>
+            <div id="display-opts"></div>
         </div>
     </div>
 
     <script>
-        let state = { lvl: '', mode: '', idx: 0, s1: 0, s2: 0, turn: 1 };
+        let data = { lvl: '', mode: '', idx: 0, s1: 0, s2: 0, turn: 1 };
         
-        const qa = {
+        const questions = {
             graduacao: [
-                {q: "Segundo Cássia Furtado, qual NBR trata de Referências?", o: ["NBR 6023", "NBR 10520", "NBR 14724"], a: 0, m: "Correto! A NBR 6023 é essencial para o curso na UFPB."},
-                {q: "O que a cor de capa bordô geralmente representa em teses na UFPB?", o: ["Doutorado", "Mestrado", "Graduação"], a: 0, m: "Exato! O bordô é a cor da autoridade acadêmica no doutorado."}
+                {q: "Na UFPB, qual autor é referência em Biblioteconomia Digital?", o: ["Cássia Furtado", "Melvil Dewey", "Paul Otlet"], a: 0},
+                {q: "O que significa a sigla BDTD?", o: ["Banco de Dados Têxteis", "Biblioteca Digital de Teses e Dissertações", "Base de Dados de Tecnologia"], a: 1}
             ],
             mestrado: [
-                {q: "Quem definiu a Ciência da Informação como ciência em 1968?", o: ["Saracevic", "Borko", "Otlet"], a: 1, m: "Borko consolidou o conceito que estudamos."}
+                {q: "Qual o foco da Teoria da Classificação Facetada?", o: ["Ranganathan", "Borko", "Luhn"], a: 0}
             ]
         };
 
-        function pick(type, val, el) {
-            document.querySelectorAll('.btn-' + type).forEach(b => b.classList.remove('active'));
+        function setVal(type, val, el) {
+            document.querySelectorAll('.b-' + (type==='lvl'?'lvl':'mod')).forEach(b => b.classList.remove('active'));
             el.classList.add('active');
-            state[type] = val;
-            if(state.lvl && state.mode) document.getElementById('go-btn').style.display = 'block';
+            data[type] = val;
+            if(data.lvl && data.mode) document.getElementById('btn-start').style.display = 'block';
         }
 
-        function start() {
-            document.getElementById('config-screen').style.display = 'none';
-            document.getElementById('game-screen').style.display = 'block';
-            render();
+        function runGame() {
+            document.getElementById('screen-config').classList.add('hidden');
+            document.getElementById('screen-game').classList.remove('hidden');
+            renderNext();
         }
 
-        function render() {
-            let currentList = qa[state.lvl] || qa.graduacao;
-            let data = currentList[state.idx];
+        function renderNext() {
+            let list = questions[data.lvl] || questions.graduacao;
+            let current = list[data.idx];
             
-            document.getElementById('turn').innerText = state.mode === 'p2' ? "P" + state.turn : "JOGANDO";
-            document.getElementById('q-text').innerText = data.q;
-            
-            let html = '';
-            data.o.forEach((opt, i) => {
-                html += `<button class="btn" onclick="check(${i}, ${data.a}, '${data.m}')">${opt}</button>`;
-            });
-            document.getElementById('options').innerHTML = html;
-        }
-
-        function check(choice, correct, msg) {
-            let win = (choice === correct);
-            if(win) { if(state.turn === 1) state.s1++; else state.s2++; }
-            
-            document.getElementById('f-title').innerText = win ? "CERTO!" : "ERRADO!";
-            document.getElementById('f-title').style.color = win ? "green" : "red";
-            document.getElementById('f-msg').innerText = win ? msg : "Tente revisar as normas da ABNT.";
-            document.getElementById('feedback').style.display = 'flex';
-            
-            document.getElementById('score').innerText = state.mode === 'p2' ? `P1:${state.s1} | P2:${state.s2}` : `PONTOS: ${state.s1}`;
-        }
-
-        function nextQ() {
-            document.getElementById('feedback').style.display = 'none';
-            state.idx++;
-            let currentList = qa[state.lvl] || qa.graduacao;
-            
-            if(state.mode === 'p2') state.turn = (state.turn === 1) ? 2 : 1;
-
-            if(currentList[state.idx]) {
-                render();
-            } else {
-                alert("Ciclo Concluído! Parabéns, Emerson.");
-                location.reload();
+            if(!current) {
+                alert("Ciclo Finalizado! P1: " + data.s1 + (data.mode==='p2' ? " | P2: " + data.s2 : ""));
+                return location.reload();
             }
+
+            document.getElementById('display-q').innerText = current.q;
+            document.getElementById('txt-turn').innerText = data.mode === 'p2' ? "TURNO: P" + data.turn : "MODO SOLO";
+            
+            let h = '';
+            current.o.forEach((opt, i) => {
+                h += `<button class="btn" onclick="checkAns(${i}, ${current.a})">${opt}</button>`;
+            });
+            document.getElementById('display-opts').innerHTML = h;
+        }
+
+        function checkAns(choice, correct) {
+            if(choice === correct) {
+                if(data.turn === 1) data.s1++; else data.s2++;
+                alert("Correto!");
+            } else {
+                alert("Incorreto. Revise os conceitos.");
+            }
+            
+            data.idx++;
+            if(data.mode === 'p2') data.turn = data.turn === 1 ? 2 : 1;
+            document.getElementById('txt-score').innerText = data.mode === 'p2' ? `P1:${data.s1} | P2:${data.s2}` : `PONTOS: ${data.s1}`;
+            renderNext();
         }
     </script>
 </body>
