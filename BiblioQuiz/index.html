@@ -1,108 +1,162 @@
-<!-- 1. ADICIONE ESTE CSS PARA O NOVO MODAL (MODAL DE FEEDBACK) -->
-<style>
-    /* MODAL DE FEEDBACK ACADÊMICO (Nível 100) */
-    #feedback-modal {
-        display: none; position: fixed; inset: 0; z-index: 3000;
-        background: rgba(0,0,0,0.85); align-items: center; justify-content: center;
-        backdrop-filter: blur(5px);
-    }
-    .modal-box {
-        background: var(--parchment); border: 3px double var(--ink);
-        width: 85%; max-width: 350px; padding: 30px; text-align: center;
-        box-shadow: 0 0 50px rgba(0,0,0,0.5); transform: scale(0.8);
-        transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    }
-    .modal-box.active { transform: scale(1); }
-    .status-icon { font-size: 2.5rem; margin-bottom: 15px; }
-    .status-text { font-family: 'Cinzel'; font-size: 1.1rem; color: var(--burgundy); margin: 10px 0; }
-    .source-btn { 
-        margin-top: 20px; background: var(--ink); color: white; 
-        padding: 12px; width: 100%; border: none; font-family: 'Cinzel'; cursor: pointer;
-    }
-</style>
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>BiblioQuiz Legacy</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Lora:ital,wght@0,400;1,700&display=swap" rel="stylesheet">
+    <style>
+        :root { --gold: #d4af37; --ink: #1a1a1a; --parchment: #fdfaf3; --burgundy: #630d0d; }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        body, html { margin: 0; padding: 0; height: 100%; width: 100%; font-family: 'Lora', serif; background: #000; overflow: hidden; }
 
-<!-- 2. INSIRA ESTE HTML NO FINAL DO BODY -->
-<div id="feedback-modal">
-    <div class="modal-box" id="modal-content">
-        <div id="modal-icon" class="status-icon"></div>
-        <div id="modal-status" class="status-text"></div>
-        <p id="modal-msg" style="font-size: 0.85rem; font-style: italic; color: #555;"></p>
-        <button class="source-btn" onclick="closeFeedback()">Prosseguir Pesquisa</button>
-    </div>
-</div>
-
-<!-- 3. SUBSTITUA A FUNÇÃO 'check' E O 'repo' NO SEU SCRIPT -->
-<script>
-    // Banco de Dados com Personagens (Curadoria Acadêmica)
-    const repo = {
-        graduacao: [
-            { a: "Normalização", p: "Cássia Furtado", q: "A NBR 6023:2018 trata especificamente de:", o: ["Sumários", "Citações", "Referências", "Índices"], r: 2, msg: "A organização das fontes é o pilar da ciência." },
-            { a: "Leis de Ranganathan", p: "S.R. Ranganathan", q: "Qual a 2ª Lei da Biblioteconomia?", o: ["Livros são para uso", "Para cada leitor, seu livro", "Poupe o tempo do leitor", "A biblioteca é um organismo"], r: 1, msg: "O conhecimento deve alcançar a todos." }
-        ],
-        mestrado: [
-            { a: "Documentação", p: "Paul Otlet", q: "Quem é considerado o pai da Documentação?", o: ["Dewey", "Cutter", "Paul Otlet", "Lafontaine"], r: 2, msg: "Classificar é compreender o mundo." }
-        ]
-    };
-
-    function loadQuestion() {
-        const data = repo[game.lvl][game.idx];
-        document.getElementById('area-badge').innerText = data.a;
-        // Exibe o personagem que está perguntando
-        document.getElementById('q-text').innerHTML = `<span style="color: var(--burgundy); font-size: 0.7rem; display: block; margin-bottom: 5px;">${data.p} questiona:</span>${data.q}`;
-        
-        document.getElementById('turn-info').innerText = game.mode === 'p2' ? `VEZ DO PESQUISADOR ${game.turn}` : "SISTEMA ATIVO";
-        
-        const container = document.getElementById('options-container');
-        container.innerHTML = '';
-        data.o.forEach((opt, i) => {
-            const b = document.createElement('button');
-            b.className = 'btn-mode';
-            b.style.fontSize = '0.85rem';
-            b.innerText = opt;
-            b.onclick = () => check(i, data.r, data.msg);
-            container.appendChild(b);
-        });
-    }
-
-    function check(chosen, correct, personalMsg) {
-        const modal = document.getElementById('feedback-modal');
-        const mContent = document.getElementById('modal-content');
-        const mIcon = document.getElementById('modal-icon');
-        const mStatus = document.getElementById('modal-status');
-        const mMsg = document.getElementById('modal-msg');
-
-        modal.style.display = 'flex';
-        setTimeout(() => mContent.classList.add('active'), 10);
-
-        if(chosen === correct) {
-            if(game.turn === 1) game.s1++; else game.s2++;
-            mIcon.innerText = "📜";
-            mStatus.innerText = "PRECISÃO CIENTÍFICA";
-            mMsg.innerText = personalMsg;
-        } else {
-            mIcon.innerText = "⚠️";
-            mStatus.innerText = "DIVERGÊNCIA DOCUMENTAL";
-            mMsg.innerText = "A fonte citada não corresponde ao registro.";
+        /* ABERTURA BLINDADA */
+        #intro-layer {
+            position: fixed; inset: 0; z-index: 5000;
+            background: radial-gradient(circle at center, #1e272e 0%, #000 100%);
+            display: flex; align-items: center; justify-content: center;
+            transition: opacity 0.8s ease;
         }
-        updateHUD();
-    }
+        .book-anchor {
+            width: 280px; height: 400px; position: relative;
+            perspective: 1500px;
+        }
+        .ancient-book {
+            width: 100%; height: 100%; background: var(--burgundy);
+            border: 4px solid var(--gold); border-left: 15px solid #4a0a0a;
+            border-radius: 5px 15px 15px 5px; box-shadow: 0 20px 50px rgba(0,0,0,0.9);
+            display: flex; flex-direction: column; align-items: center; justify-content: space-around;
+            padding: 40px 20px; text-align: center; color: var(--gold);
+            transform-origin: left center; transition: transform 1s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .book-open-anim { transform: rotateY(-160deg) scale(1.2); opacity: 0; pointer-events: none; }
 
-    function closeFeedback() {
-        const modal = document.getElementById('feedback-modal');
-        const mContent = document.getElementById('modal-content');
-        mContent.classList.remove('active');
-        
-        setTimeout(() => {
-            modal.style.display = 'none';
-            game.idx++;
-            if(game.mode === 'p2') game.turn = game.turn === 1 ? 2 : 1;
+        /* HOME DASHBOARD - CORREÇÃO DE TAMANHO */
+        #home-screen {
+            display: none; width: 100%; height: 100vh; position: relative;
+            background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), 
+                        url('https://images.unsplash.com/photo-1507842217343-583bb7270b66?q=80&w=2000') center/cover;
+            flex-direction: column; align-items: center; justify-content: center;
+        }
+        .glass-panel {
+            background: rgba(253, 250, 243, 0.96); width: 90%; max-width: 400px;
+            padding: 30px; border: 3px double var(--ink); border-radius: 4px;
+            box-shadow: 0 0 40px rgba(0,0,0,0.5); text-align: center;
+        }
 
-            if(repo[game.lvl] && repo[game.lvl][game.idx]) {
-                loadQuestion();
-            } else {
-                alert(`Ciclo Acadêmico Completo!\nPontuação Final: P1: ${game.s1} | P2: ${game.s2}`);
-                location.reload();
-            }
-        }, 300);
-    }
-</script>
+        /* COMPONENTES DE INTERAÇÃO */
+        .btn-nav {
+            width: 100%; padding: 14px; margin: 8px 0; border: 1px solid var(--ink);
+            background: #fff; font-family: 'Cinzel'; font-size: 0.8rem; cursor: pointer;
+        }
+        .btn-nav.active { background: var(--gold); color: white; border-color: white; }
+        .btn-start { 
+            width: 100%; padding: 18px; margin-top: 20px; background: var(--burgundy);
+            color: white; font-family: 'Cinzel'; border: none; font-weight: bold;
+            display: none; animation: fadeIn 0.5s;
+        }
+
+        /* MODAL DE FEEDBACK (SUBSTITUTO DO ALERT) */
+        #feedback-modal {
+            display: none; position: fixed; inset: 0; z-index: 6000;
+            background: rgba(0,0,0,0.9); align-items: center; justify-content: center;
+        }
+        .modal-box {
+            background: var(--parchment); border: 2px solid var(--gold);
+            width: 85%; padding: 30px; text-align: center;
+        }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    </style>
+</head>
+<body>
+
+    <!-- CAMADA 1: ABERTURA -->
+    <div id="intro-layer">
+        <div class="book-anchor" onclick="openLegacy(this)">
+            <div class="ancient-book" id="main-book">
+                <div style="border-bottom: 1px solid var(--gold); width: 100%; padding-bottom: 10px; font-size: 0.6rem;">UFPB ACADÊMICO</div>
+                <h1 style="font-family: 'Cinzel'; font-size: 1.5rem;">BIBLIOQUIZ<br>LEGACY</h1>
+                <p style="font-style: italic; font-size: 0.7rem; color: #fff;">Toque para abrir o acervo</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- CAMADA 2: HOME -->
+    <div id="home-screen">
+        <div class="glass-panel">
+            <h2 style="font-family: 'Cinzel'; color: var(--burgundy); margin-bottom: 5px;">Portal de Pesquisa</h2>
+            <p style="font-size: 0.7rem; margin-bottom: 20px;">Defina o ciclo e o modo de confronto.</p>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 5px;">
+                <button class="btn-nav" onclick="set('lvl', 'graduacao', this)">GRAD</button>
+                <button class="btn-nav" onclick="set('lvl', 'mestrado', this)">MESTR</button>
+                <button class="btn-nav" onclick="set('lvl', 'doutorado', this)">DOUT</button>
+            </div>
+
+            <div style="margin-top: 15px;">
+                <button class="btn-nav" onclick="set('mode', 'solo', this)">SOLO VS CPU</button>
+                <button class="btn-nav" onclick="set('mode', 'p2', this)">DUELO (P2)</button>
+            </div>
+
+            <button id="start-btn" class="btn-start" onclick="initGame()">INICIAR CICLO</button>
+        </div>
+    </div>
+
+    <!-- MODAL DE FEEDBACK -->
+    <div id="feedback-modal">
+        <div class="modal-box">
+            <div id="f-icon" style="font-size: 2rem;"></div>
+            <h3 id="f-title" style="font-family: 'Cinzel'; color: var(--burgundy);"></h3>
+            <p id="f-msg" style="font-style: italic; font-size: 0.9rem;"></p>
+            <button class="btn-nav" style="background: var(--ink); color: #fff;" onclick="next()">Continuar</button>
+        </div>
+    </div>
+
+    <audio id="snd-flip" src="https://www.soundjay.com/misc/sounds/page-flip-01a.mp3"></audio>
+
+    <script>
+        let state = { lvl: '', mode: '', s1: 0, s2: 0, turn: 1, idx: 0 };
+        const repo = {
+            graduacao: [{ p: "Cássia Furtado", q: "O que define a NBR 6023?", o: ["Referências", "Citações", "Sumário", "Índice"], r: 0, m: "A base da pesquisa é a fonte." }],
+            mestrado: [{ p: "Paul Otlet", q: "Qual o foco da CDU?", o: ["Hierarquia", "Facetas", "Universalidade", "Mecânica"], r: 2, m: "Toda informação é conectada." }]
+        };
+
+        function openLegacy() {
+            document.getElementById('snd-flip').play();
+            document.getElementById('main-book').classList.add('book-open-anim');
+            setTimeout(() => {
+                document.getElementById('intro-layer').style.opacity = '0';
+                setTimeout(() => {
+                    document.getElementById('intro-layer').style.display = 'none';
+                    document.getElementById('home-screen').style.display = 'flex';
+                }, 500);
+            }, 600);
+        }
+
+        function set(type, val, el) {
+            el.parentElement.querySelectorAll('button').forEach(b => b.classList.remove('active'));
+            el.classList.add('active');
+            state[type] = val;
+            if(state.lvl && state.mode) document.getElementById('start-btn').style.display = 'block';
+        }
+
+        function initGame() {
+            // Lógica para carregar a primeira questão baseada no nível escolhido
+            alert("Ciclo iniciado: " + state.lvl.toUpperCase());
+            // Aqui você integraria a área de jogo como nas versões anteriores
+        }
+
+        function showFeedback(win, msg) {
+            document.getElementById('feedback-modal').style.display = 'flex';
+            document.getElementById('f-icon').innerText = win ? "📜" : "⚠️";
+            document.getElementById('f-title').innerText = win ? "PRECISÃO CIENTÍFICA" : "DIVERGÊNCIA";
+            document.getElementById('f-msg').innerText = msg;
+        }
+
+        function next() {
+            document.getElementById('feedback-modal').style.display = 'none';
+        }
+    </script>
+</body>
+</html>
