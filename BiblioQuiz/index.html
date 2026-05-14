@@ -3,164 +3,167 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BiblioQuiz: Scientific Environment</title>
+    <title>BiblioQuiz: Academic Legacy</title>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Lora:ital,wght@0,400;1,700&display=swap" rel="stylesheet">
     <style>
-        :root { 
-            --catalog: #9b59b6; --hist: #d4af37; --epi: #800020; 
-            --parchment: #f9f4e8; --ink: #2c3e50; 
-        }
-        body, html { margin: 0; padding: 0; height: 100%; font-family: 'Lora', serif; background: #0a0a0a; overflow: hidden; }
+        :root { --gold: #d4af37; --parchment: #f9f4e8; --ink: #2c3e50; --burgundy: #800020; }
+        body, html { margin: 0; padding: 0; height: 100%; font-family: 'Lora', serif; background: #000; color: var(--ink); overflow: hidden; }
         
-        #app-container { 
-            width: 100vw; height: 100vh; display: flex; align-items: center; justify-content: center; 
-            transition: background 1.5s ease-in-out; background-size: cover; background-position: center;
+        /* ABERTURA: LIVRO INSPIRADOR */
+        #book-intro {
+            position: absolute; width: 100vw; height: 100vh; background: #1a1a1a;
+            display: flex; align-items: center; justify-content: center; z-index: 100; transition: 2s;
         }
+        .book {
+            width: 300px; height: 400px; background: var(--burgundy); border: 4px solid var(--gold);
+            border-radius: 5px 15px 15px 5px; box-shadow: 20px 20px 60px rgba(0,0,0,0.7);
+            display: flex; align-items: center; justify-content: center; cursor: pointer;
+            transition: 1.5s; transform-style: preserve-3d;
+        }
+        .book:hover { transform: rotateY(-30deg); }
+        .book-title { font-family: 'Cinzel'; color: var(--gold); text-align: center; padding: 20px; border: 1px solid var(--gold); margin: 10px; }
 
-        /* Menu Profissional */
-        #menu { background: var(--parchment); padding: 50px; border: 5px double var(--ink); text-align: center; box-shadow: 0 0 100px rgba(0,0,0,0.9); z-index: 10; }
-        .btn-level { 
-            display: block; width: 280px; padding: 18px; margin: 15px auto; 
-            font-family: 'Cinzel', serif; font-size: 1rem; cursor: pointer; 
-            transition: 0.4s; background: white; border: 2px solid var(--ink); 
+        /* HOME / MENU PRINCIPAL */
+        #home-menu {
+            display: none; width: 100vw; height: 100vh; background: radial-gradient(circle, #2c3e50 0%, #000 100%);
+            flex-direction: column; align-items: center; justify-content: center; z-index: 50;
         }
-        .btn-level:hover { background: var(--ink); color: white; transform: translateY(-3px); }
-
-        /* Card de Elite */
-        .card { 
-            width: 420px; min-height: 580px; background: var(--parchment); 
-            border-radius: 4px; padding: 35px; display: none; position: relative; 
-            box-shadow: 0 30px 60px rgba(0,0,0,0.7); box-sizing: border-box;
-        }
-        .subject-tag { 
-            position: absolute; top: -15px; right: 20px; padding: 8px 15px; 
-            color: white; font-family: 'Cinzel'; font-size: 0.7rem; border-radius: 3px; 
-        }
-        .persona-name { font-family: 'Cinzel'; font-size: 1.1rem; margin-top: 10px; }
-        .persona-speech { font-style: italic; color: #555; border-left: 3px solid var(--ink); padding-left: 15px; margin: 20px 0; font-size: 0.95rem; }
-        .question-text { font-weight: bold; font-size: 1.2rem; margin-bottom: 25px; line-height: 1.4; }
+        .menu-box { background: var(--parchment); padding: 50px; border: 5px double var(--ink); text-align: center; box-shadow: 0 0 100px rgba(0,0,0,0.9); }
         
-        .option { 
-            padding: 14px; border: 1px solid #ccc; margin-bottom: 12px; 
-            border-radius: 4px; cursor: pointer; transition: 0.2s; background: rgba(255,255,255,0.5);
+        /* BOTÕES ACADÊMICOS */
+        .btn-nav {
+            display: block; width: 300px; padding: 15px; margin: 10px auto; 
+            font-family: 'Cinzel'; background: white; border: 2px solid var(--ink); cursor: pointer; transition: 0.3s;
         }
-        .option:hover { background: white; border-color: var(--ink); box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
+        .btn-nav:hover { background: var(--burgundy); color: white; transform: scale(1.05); }
+        .btn-mode { background: var(--gold); border: none; font-weight: bold; }
 
-        /* Estilos de Feedback */
-        #feedback { display: none; margin-top: 20px; animation: fadeIn 0.5s; }
-        .source-btn { 
-            display: block; margin-top: 15px; color: var(--epi); 
-            text-decoration: none; font-weight: bold; font-size: 0.85rem; 
-        }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        /* INTERFACE DE JOGO */
+        #game-area { display: none; width: 100vw; height: 100vh; align-items: center; justify-content: center; background-size: cover; transition: 1s; }
+        .card { width: 420px; background: var(--parchment); border: 3px solid var(--gold); padding: 30px; box-shadow: 0 20px 50px rgba(0,0,0,0.8); }
+        .subject-tag { display: inline-block; padding: 5px 15px; color: white; font-family: 'Cinzel'; font-size: 0.7rem; margin-bottom: 15px; }
+        .option { padding: 12px; border: 1px solid #ccc; margin: 8px 0; border-radius: 4px; cursor: pointer; transition: 0.2s; }
+        .option:hover { background: rgba(128, 0, 32, 0.1); border-color: var(--burgundy); }
     </style>
 </head>
 <body>
 
-<div id="app-container">
-    <div id="menu">
-        <h1 style="font-family: 'Cinzel'; margin-bottom: 5px;">BiblioQuiz Pro</h1>
-        <p style="font-size: 0.8rem; letter-spacing: 2px; margin-bottom: 30px;">PLATAFORMA ACADÊMICA DE AUTOAVALIAÇÃO</p>
-        <button class="btn-level" onclick="startGame('graduacao')">Nível I: Graduação</button>
-        <button class="btn-level" onclick="startGame('mestrado')">Nível II: Mestrado</button>
-        <button class="btn-level" onclick="startGame('doutorado')">Nível III: Doutorado</button>
-    </div>
-
-    <div id="game-area" style="display:none;">
-        <div class="card" id="main-card">
-            <div id="subject" class="subject-tag"></div>
-            <div id="persona-name" class="persona-name"></div>
-            <div id="persona-dialog" class="persona-speech"></div>
-            <div id="question" class="question-text"></div>
-            <div id="options"></div>
-            
-            <div id="feedback">
-                <div id="feedback-msg" style="padding: 15px; border-radius: 4px;"></div>
-                <a id="source-url" class="source-btn" target="_blank">📄 Acessar Documentação Científica</a>
-                <button class="btn-level" style="width:100%; margin-top:20px;" onclick="nextQuestion()">Próxima Carta</button>
+    <!-- 1. ABERTURA: O LIVRO -->
+    <div id="book-intro" onclick="openBook()">
+        <div class="book" id="main-book">
+            <div class="book-title">
+                <h2 style="font-size: 1rem;">O Legado do<br>Bibliotecário</h2>
+                <hr color="#d4af37">
+                <p style="font-size: 0.6rem;">CLIQUE PARA ABRIR</p>
             </div>
         </div>
     </div>
-</div>
 
-<audio id="snd-flip" src="https://www.soundjay.com/misc/sounds/page-flip-01a.mp3"></audio>
+    <!-- 2. HOME: MENU DE ESCOLHAS -->
+    <div id="home-menu">
+        <div class="menu-box">
+            <h1 style="font-family: 'Cinzel';">BiblioQuiz Pro</h1>
+            <p>Selecione o Ciclo Acadêmico:</p>
+            <div style="display: flex; gap: 10px;">
+                <button class="btn-nav" onclick="setLevel('graduacao')">Graduação</button>
+                <button class="btn-nav" onclick="setLevel('mestrado')">Mestrado</button>
+                <button class="btn-nav" onclick="setLevel('doutorado')">Doutorado</button>
+            </div>
+            <hr>
+            <p>Modo de Confronto:</p>
+            <button class="btn-nav btn-mode" onclick="setMode('cpu')">Solo vs Sistema (CPU)</button>
+            <button class="btn-nav btn-mode" onclick="setMode('multi')">Duelo Acadêmico (P2)</button>
+        </div>
+    </div>
 
-<script>
-    const bgs = {
-        graduacao: "url('https://images.unsplash.com/photo-1481627834876-b7833e8f5570?q=80&w=2000')",
-        mestrado: "url('https://images.unsplash.com/photo-1441986300917-64674bd600d8?q=80&w=2000')",
-        doutorado: "url('https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?q=80&w=2000')"
-    };
+    <!-- 3. ÁREA DE JOGO -->
+    <div id="game-area">
+        <div class="card">
+            <div id="tag" class="subject-tag"></div>
+            <div id="persona" style="font-family:'Cinzel'; color: var(--burgundy);"></div>
+            <p id="speech" style="font-style: italic; color: #555; font-size: 0.9rem;"></p>
+            <div id="question" style="font-weight: bold; font-size: 1.1rem; margin-bottom: 20px;"></div>
+            <div id="options"></div>
+            <div id="feedback" style="display:none; margin-top: 20px;">
+                <p id="msg"></p>
+                <a id="source" href="#" target="_blank" style="color: var(--burgundy); font-size: 0.8rem;">Ver Documentação Científica</a>
+                <button class="btn-nav" onclick="nextQuestion()" style="width:100%">Próxima Carta</button>
+            </div>
+        </div>
+    </div>
 
-    const database = {
-        graduacao: [
-            { s: "Catalogação", c: "#9b59b6", p: "Antônio Garcia Miranda", d: "A representação descritiva é a base do acesso. Você conhece os pilares?", q: "Qual a função primordial do Formato MARC 21?", o: ["Organizar livros na estante física", "Padronizar o intercâmbio de dados bibliográficos", "Substituir a Tabela Cutter", "Gerar o ISBN automaticamente"], a: 1, f: "https://www.loc.gov/marc/bibliographic/" },
-            { s: "História", c: "#d4af37", p: "Calímaco", d: "Em Alexandria, o conhecimento tinha um endereço. Qual era o seu mapa?", q: "Os 'Pinakes' de Calímaco são considerados o quê na história?", o: ["O primeiro catálogo de biblioteca", "Um manual de conservação", "Uma lista de funcionários", "Um livro de leis egípcias"], a: 0, f: "https://pt.wikipedia.org/wiki/Pinakes" }
-        ],
-        mestrado: [
-            { s: "Informação", c: "#800020", p: "Paul Otlet", d: "Minha visão era uma rede mundial de cooperação documental. Você entende a essência?", q: "A Classificação Decimal Universal (CDD) inovou ao permitir:", o: ["Apenas números inteiros", "Sinais de relação e facetas", "Uso exclusivo em bibliotecas públicas", "A extinção dos catálogos"], a: 1, f: "https://udcc.org/index.php/site/page?view=about" }
-        ]
-    };
+    <audio id="snd-flip" src="https://www.soundjay.com/misc/sounds/page-flip-01a.mp3"></audio>
 
-    let currentLvl = '';
-    let currentIdx = 0;
+    <script>
+        let config = { level: '', mode: '', currentIdx: 0 };
+        const bgs = {
+            graduacao: "url('https://images.unsplash.com/photo-1507842217343-583bb7270b66?q=80&w=2000')",
+            mestrado: "url('https://images.unsplash.com/photo-1441986300917-64674bd600d8?q=80&w=2000')",
+            doutorado: "url('https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?q=80&w=2000')"
+        };
 
-    function startGame(lvl) {
-        currentLvl = lvl;
-        document.getElementById('app-container').style.background = bgs[lvl];
-        document.getElementById('menu').style.display = 'none';
-        document.getElementById('game-area').style.display = 'flex';
-        loadQuestion();
-    }
+        const database = {
+            graduacao: [
+                { t: "Catalogação", p: "Antônio Garcia Miranda", s: "A ordem é a alma da biblioteca.", q: "O que define a NBR 6023?", o: ["Referências Bibliográficas", "Sumário", "Citações", "Lombada"], a: 0, f: "https://www.ufpb.br/biblioteca/contents/menu/servicos/normalizacao/normas-da-abnt" }
+            ],
+            mestrado: [
+                { t: "Epistemologia", p: "Tefko Saracevic", s: "A ciência da informação não é estática.", q: "O conceito de 'Relevância' é:", o: ["Binário", "Multidimensional", "Desnecessário", "Físico"], a: 1, f: "https://onlinelibrary.wiley.com/journal/15322890" }
+            ]
+        };
 
-    function loadQuestion() {
-        const data = database[currentLvl][currentIdx];
-        const card = document.getElementById('main-card');
-        document.getElementById('snd-flip').play();
-        
-        card.style.display = 'block';
-        card.style.borderColor = data.c;
-        document.getElementById('subject').innerText = data.s;
-        document.getElementById('subject').style.background = data.c;
-        document.getElementById('persona-name').innerText = data.p;
-        document.getElementById('persona-dialog').innerText = `"${data.d}"`;
-        document.getElementById('question').innerText = data.q;
-        document.getElementById('feedback').style.display = 'none';
-        
-        const opts = document.getElementById('options');
-        opts.innerHTML = '';
-        opts.style.display = 'block';
-        data.o.forEach((opt, i) => {
-            const b = document.createElement('div');
-            b.className = 'option';
-            b.innerText = opt;
-            b.onclick = () => {
-                opts.style.display = 'none';
-                const f = document.getElementById('feedback');
-                const m = document.getElementById('feedback-msg');
-                f.style.display = 'block';
-                if(i === data.a) {
-                    m.innerHTML = "✅ <strong>PRECISÃO ACADÊMICA.</strong> O especialista valida seu conhecimento.";
-                    m.style.background = "#d4edda";
-                } else {
-                    m.innerHTML = "❌ <strong>LACUNA DE INFORMAÇÃO.</strong> Recomenda-se revisão da literatura citada.";
-                    m.style.background = "#f8d7da";
-                }
-                document.getElementById('source-url').href = data.f;
-            };
-            opts.appendChild(b);
-        });
-    }
-
-    function nextQuestion() {
-        currentIdx++;
-        if(database[currentLvl] && currentIdx < database[currentLvl].length) {
-            loadQuestion();
-        } else {
-            alert("Ciclo concluído. Sua jornada acadêmica continua.");
-            location.reload();
+        function openBook() {
+            document.getElementById('snd-flip').play();
+            document.getElementById('main-book').style.transform = "rotateY(-180deg) scale(2)";
+            document.getElementById('main-book').style.opacity = "0";
+            setTimeout(() => {
+                document.getElementById('book-intro').style.display = 'none';
+                document.getElementById('home-menu').style.display = 'flex';
+            }, 1000);
         }
-    }
-</script>
+
+        function setLevel(l) { config.level = l; checkStart(); }
+        function setMode(m) { config.mode = m; checkStart(); }
+
+        function checkStart() {
+            if(config.level && config.mode) {
+                document.getElementById('home-menu').style.display = 'none';
+                document.getElementById('game-area').style.display = 'flex';
+                document.getElementById('game-area').style.backgroundImage = bgs[config.level];
+                loadQuestion();
+            }
+        }
+
+        function loadQuestion() {
+            const data = database[config.level][config.currentIdx];
+            document.getElementById('snd-flip').play();
+            document.getElementById('tag').innerText = data.t;
+            document.getElementById('tag').style.background = data.t === "Catalogação" ? "#9b59b6" : "#800020";
+            document.getElementById('persona').innerText = data.p;
+            document.getElementById('speech').innerText = `"${data.s}"`;
+            document.getElementById('question').innerText = data.q;
+            document.getElementById('feedback').style.display = 'none';
+            const opts = document.getElementById('options');
+            opts.innerHTML = '';
+            opts.style.display = 'block';
+            data.o.forEach((opt, i) => {
+                const b = document.createElement('div');
+                b.className = 'option';
+                b.innerText = opt;
+                b.onclick = () => {
+                    opts.style.display = 'none';
+                    document.getElementById('feedback').style.display = 'block';
+                    document.getElementById('msg').innerText = i === data.a ? "✅ VALIDAÇÃO CONCLUÍDA." : "❌ ERRO DE FONTES.";
+                    document.getElementById('source').href = data.f;
+                };
+                opts.appendChild(b);
+            });
+        }
+
+        function nextQuestion() {
+            config.currentIdx++;
+            if(database[config.level][config.currentIdx]) loadQuestion();
+            else { alert("Ciclo finalizado."); location.reload(); }
+        }
+    </script>
 </body>
 </html>
