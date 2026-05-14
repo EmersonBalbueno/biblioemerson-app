@@ -3,129 +3,176 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>BiblioQuiz Legacy v100</title>
+    <title>BiblioQuiz Legacy</title>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Lora:ital,wght@0,400;1,700&display=swap" rel="stylesheet">
     <style>
         :root { --gold: #d4af37; --ink: #1a1a1a; --parchment: #fdfaf3; --burgundy: #630d0d; }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        
-        /* RESET TOTAL PARA EVITAR TELA BRANCA */
-        body, html { 
-            margin: 0; padding: 0; height: 100%; width: 100%; 
-            font-family: 'Lora', serif; background: #000; overflow: hidden; 
-        }
+        body, html { margin: 0; padding: 0; height: 100%; width: 100%; font-family: 'Lora', serif; background: #000; color: var(--ink); overflow: hidden; }
 
-        /* CAMADA DE ENTRADA (ESTÁTICA POR SEGURANÇA) */
-        #intro-layer {
-            position: fixed; inset: 0; z-index: 9999;
-            background: radial-gradient(circle, #2c3e50, #000);
-            display: flex; align-items: center; justify-content: center;
-        }
+        /* ABERTURA */
+        #intro-layer { position: fixed; inset: 0; z-index: 100; background: radial-gradient(#2c3e50, #000); display: flex; align-items: center; justify-content: center; transition: 0.5s; }
+        .book-btn { width: 260px; height: 380px; background: var(--burgundy); border: 4px solid var(--gold); border-radius: 5px 15px 15px 5px; color: var(--gold); text-align: center; padding: 40px 20px; cursor: pointer; display: flex; flex-direction: column; justify-content: space-between; box-shadow: 0 0 50px rgba(0,0,0,0.8); }
 
-        .book-card {
-            width: 280px; height: 400px; background: var(--burgundy);
-            border: 4px solid var(--gold); border-left: 15px solid #4a0a0a;
-            border-radius: 5px 15px 15px 5px; box-shadow: 0 0 50px rgba(0,0,0,0.8);
-            display: flex; flex-direction: column; align-items: center; justify-content: space-between;
-            padding: 40px 20px; text-align: center; color: var(--gold); cursor: pointer;
-            transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-        }
+        /* HOME E TELAS */
+        .screen { display: none; width: 100%; height: 100%; background: var(--parchment); flex-direction: column; align-items: center; justify-content: center; padding: 20px; text-align: center; }
+        .panel { background: white; width: 100%; max-width: 400px; padding: 25px; border: 3px double var(--ink); box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
 
-        /* HOME SCREEN - GARANTIA DE EXIBIÇÃO */
-        #home-screen {
-            display: none; width: 100%; height: 100%; 
-            background: #fdfaf3; /* Fundo sólido para segurança */
-            flex-direction: column; align-items: center; justify-content: center;
-            padding: 20px;
-        }
+        /* BOTÕES */
+        .btn { width: 100%; padding: 15px; margin: 8px 0; border: 1px solid var(--ink); background: #fff; font-family: 'Cinzel'; cursor: pointer; font-size: 0.8rem; transition: 0.3s; }
+        .btn:active { transform: scale(0.98); }
+        .btn.selected { background: var(--gold); color: white; border-color: white; }
+        .btn-action { background: var(--burgundy); color: white; border: none; font-weight: bold; margin-top: 15px; display: none; }
 
-        .glass-panel {
-            background: white; width: 100%; max-width: 380px;
-            padding: 30px; border: 3px double var(--ink); border-radius: 2px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2); text-align: center;
-        }
+        /* ÁREA DE JOGO */
+        #game-area { width: 100%; max-width: 400px; }
+        .badge { background: var(--burgundy); color: white; padding: 5px 15px; font-family: 'Cinzel'; font-size: 0.6rem; display: inline-block; margin-bottom: 10px; }
+        .hud { width: 100%; display: flex; justify-content: space-between; margin-bottom: 20px; font-family: 'Cinzel'; font-size: 0.7rem; border-bottom: 1px solid #ddd; padding-bottom: 10px; }
 
-        .btn-nav {
-            width: 100%; padding: 15px; margin: 8px 0; border: 1px solid var(--ink);
-            background: #fff; font-family: 'Cinzel'; font-size: 0.8rem; cursor: pointer;
-        }
-        .btn-nav.active { background: var(--gold); color: white; border-color: white; }
-
-        .btn-start { 
-            width: 100%; padding: 18px; margin-top: 20px; background: var(--burgundy);
-            color: white; font-family: 'Cinzel'; border: none; font-weight: bold;
-            display: none;
-        }
-
-        /* MODAL DE FEEDBACK INTERNO (Adeus Alerts do Navegador) */
-        #feedback-modal {
-            display: none; position: fixed; inset: 0; z-index: 10000;
-            background: rgba(0,0,0,0.9); align-items: center; justify-content: center;
-        }
-        .modal-box {
-            background: var(--parchment); border: 2px solid var(--gold);
-            width: 85%; max-width: 350px; padding: 30px; text-align: center;
-        }
+        /* MODAL DE FEEDBACK */
+        #modal { display: none; position: fixed; inset: 0; z-index: 200; background: rgba(0,0,0,0.9); align-items: center; justify-content: center; padding: 20px; }
+        .modal-content { background: white; padding: 30px; border: 2px solid var(--gold); text-align: center; width: 100%; max-width: 320px; }
     </style>
 </head>
 <body>
 
-    <!-- CAMADA 1: ABERTURA (Simples e Eficaz) -->
-    <div id="intro-layer" onclick="launch()">
-        <div class="book-card" id="book-element">
-            <div style="border-bottom: 1px solid var(--gold); width: 100%; padding-bottom: 10px; font-size: 0.6rem;">UFPB ACADÊMICO</div>
-            <h1 style="font-family: 'Cinzel'; font-size: 1.4rem;">BIBLIOQUIZ<br>LEGACY</h1>
-            <p style="font-style: italic; font-size: 0.7rem; color: #fff;">Toque para Pesquisar</p>
+    <!-- ABERTURA -->
+    <div id="intro-layer" onclick="showHome()">
+        <div class="book-btn">
+            <div style="border-bottom: 1px solid var(--gold); padding-bottom: 10px; font-size: 0.6rem;">UFPB - BIBLIOTECONOMIA</div>
+            <h1 style="font-family: 'Cinzel'; font-size: 1.3rem;">BIBLIOQUIZ<br>LEGACY</h1>
+            <p style="font-size: 0.7rem; color: #fff; font-style: italic;">Toque para Abrir</p>
         </div>
     </div>
 
-    <!-- CAMADA 2: HOME (Carregamento Prioritário) -->
-    <div id="home-screen">
-        <div class="glass-panel">
-            <h2 style="font-family: 'Cinzel'; color: var(--burgundy); margin: 0;">Portal de Acesso</h2>
-            <p style="font-size: 0.7rem; margin-bottom: 20px;">Selecione sua trajetória acadêmica.</p>
+    <!-- MENU PRINCIPAL -->
+    <div id="home-screen" class="screen" style="display: flex;">
+        <div class="panel">
+            <h2 style="font-family: 'Cinzel'; margin: 0; color: var(--burgundy);">Portal de Acesso</h2>
+            <p style="font-size: 0.7rem; margin-bottom: 20px;">Configure sua Pesquisa Acadêmica</p>
             
-            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 5px;">
-                <button class="btn-nav" onclick="pick('lvl', 'graduacao', this)">GRAD</button>
-                <button class="btn-nav" onclick="pick('lvl', 'mestrado', this)">MESTR</button>
-                <button class="btn-nav" onclick="pick('lvl', 'doutorado', this)">DOUT</button>
+            <div id="lvl-group" style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 5px;">
+                <button class="btn" onclick="select('lvl', 'graduacao', this)">GRAD</button>
+                <button class="btn" onclick="select('lvl', 'mestrado', this)">MESTR</button>
+                <button class="btn" onclick="select('lvl', 'doutorado', this)">DOUT</button>
             </div>
 
-            <div style="margin-top: 10px;">
-                <button class="btn-nav" onclick="pick('mode', 'solo', this)">SOLO VS CPU</button>
-                <button class="btn-nav" onclick="pick('mode', 'p2', this)">DUELO (P2)</button>
+            <div id="mode-group" style="margin-top: 15px;">
+                <button class="btn" onclick="select('mode', 'solo', this)">SOLO VS CPU</button>
+                <button class="btn" onclick="select('mode', 'p2', this)">DUELO (P2)</button>
             </div>
 
-            <button id="start-btn" class="btn-start" onclick="alert('Iniciando sistema...')">INICIAR CICLO</button>
+            <button id="start-btn" class="btn btn-action" onclick="startGame()">INICIAR CICLO</button>
+        </div>
+    </div>
+
+    <!-- INTERFACE DE JOGO -->
+    <div id="game-screen" class="screen">
+        <div id="game-area">
+            <div class="hud">
+                <span id="p1-score">P1: 0</span>
+                <span id="turn-label">VEZ DO P1</span>
+                <span id="p2-score">P2: 0</span>
+            </div>
+            <div class="panel" style="text-align: left;">
+                <div id="area-tag" class="badge">ÁREA</div>
+                <p id="question-text" style="font-weight: bold; min-height: 50px;"></p>
+                <div id="options-box"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL DE RESPOSTA -->
+    <div id="modal">
+        <div class="modal-content">
+            <h3 id="modal-title" style="font-family: 'Cinzel'; margin: 0;"></h3>
+            <p id="modal-msg" style="font-style: italic; font-size: 0.85rem; margin: 20px 0;"></p>
+            <button class="btn" style="background: var(--ink); color: #fff;" onclick="closeModal()">PRÓXIMA FASE</button>
         </div>
     </div>
 
     <script>
-        let config = { lvl: '', mode: '' };
+        // ESTADO GLOBAL DO JOGO
+        let game = { lvl: '', mode: '', turn: 1, s1: 0, s2: 0, idx: 0 };
 
-        function launch() {
-            const book = document.getElementById('book-element');
-            const intro = document.getElementById('intro-layer');
-            const home = document.getElementById('home-screen');
+        // BANCO DE DADOS (Exemplos Reais de Biblioteconomia)
+        const db = {
+            graduacao: [
+                { s: "Catalogação", p: "Cássia Furtado", q: "Qual a norma da ABNT para Referências?", o: ["NBR 10520", "NBR 6023", "NBR 14724", "NBR 6022"], a: 1, m: "A referência é a base da transparência científica." },
+                { s: "Classificação", p: "Melvil Dewey", q: "A classe 600 na CDD representa qual área?", o: ["Religião", "Ciências Sociais", "Tecnologia / Ciências Aplicadas", "Artes"], a: 2, m: "Organizar o conhecimento prático é essencial." }
+            ],
+            mestrado: [
+                { s: "Epistemologia", p: "Borko", q: "Em que ano a CI foi definida por Borko?", o: ["1960", "1968", "1972", "1980"], a: 1, m: "A Ciência da Informação nasce da necessidade interdisciplinar." }
+            ],
+            doutorado: [
+                { s: "Filosofia", q: "Qual o foco da 'Teoria Crítica' na Biblio?", o: ["Automação", "Poder e Discurso", "Estatística", "Acervo"], a: 1, m: "A neutralidade é um mito a ser questionado." }
+            ]
+        };
 
-            // Animação de saída rápida
-            book.style.transform = "scale(0.8) rotateY(-20deg)";
-            book.style.opacity = "0";
-            
-            setTimeout(() => {
-                intro.style.display = "none";
-                home.style.display = "flex";
-            }, 400);
+        function showHome() {
+            document.getElementById('intro-layer').style.opacity = '0';
+            setTimeout(() => document.getElementById('intro-layer').style.display = 'none', 500);
         }
 
-        function pick(type, val, el) {
-            const container = el.parentElement;
-            container.querySelectorAll('button').forEach(b => b.classList.remove('active'));
-            el.classList.add('active');
-            config[type] = val;
+        function select(type, val, el) {
+            const btns = el.parentElement.querySelectorAll('.btn');
+            btns.forEach(b => b.classList.remove('selected'));
+            el.classList.add('selected');
+            game[type] = val;
+            if(game.lvl && game.mode) document.getElementById('start-btn').style.display = 'block';
+        }
+
+        function startGame() {
+            document.getElementById('home-screen').style.display = 'none';
+            document.getElementById('game-screen').style.display = 'flex';
+            if(game.mode === 'solo') document.getElementById('p2-score').style.visibility = 'hidden';
+            renderQuestion();
+        }
+
+        function renderQuestion() {
+            const list = db[game.lvl] || db.graduacao;
+            const data = list[game.idx];
             
-            if(config.lvl && config.mode) {
-                document.getElementById('start-btn').style.display = 'block';
+            document.getElementById('area-tag').innerText = data.s;
+            document.getElementById('question-text').innerHTML = `<small style="color:var(--burgundy)">${data.p || 'O Sistema'} questiona:</small><br>${data.q}`;
+            document.getElementById('turn-label').innerText = game.mode === 'p2' ? `PESQUISADOR ${game.turn}` : "MODO SOLO";
+            
+            const box = document.getElementById('options-box');
+            box.innerHTML = '';
+            data.o.forEach((opt, i) => {
+                const b = document.createElement('button');
+                b.className = 'btn';
+                b.innerText = opt;
+                b.onclick = () => verify(i, data.a, data.m);
+                box.appendChild(b);
+            });
+        }
+
+        function verify(choice, correct, msg) {
+            const isCorrect = (choice === correct);
+            if(isCorrect) {
+                if(game.turn === 1) game.s1++; else game.s2++;
+            }
+
+            document.getElementById('modal').style.display = 'flex';
+            document.getElementById('modal-title').innerText = isCorrect ? "PRECISÃO CIENTÍFICA" : "ERRO DE REGISTRO";
+            document.getElementById('modal-title').style.color = isCorrect ? "green" : "var(--burgundy)";
+            document.getElementById('modal-msg').innerText = isCorrect ? msg : "A resposta não condiz com as normas vigentes.";
+            
+            document.getElementById('p1-score').innerText = `P1: ${game.s1}`;
+            document.getElementById('p2-score').innerText = `P2: ${game.s2}`;
+        }
+
+        function closeModal() {
+            document.getElementById('modal').style.display = 'none';
+            game.idx++;
+            if(game.mode === 'p2') game.turn = (game.turn === 1) ? 2 : 1;
+
+            if(db[game.lvl] && db[game.lvl][game.idx]) {
+                renderQuestion();
+            } else {
+                alert(`Ciclo Acadêmico Finalizado!\nPlacar: P1: ${game.s1} | P2: ${game.s2}`);
+                location.reload();
             }
         }
     </script>
