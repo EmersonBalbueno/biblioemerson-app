@@ -1,128 +1,108 @@
-<!-- SUBSTITUA A CAMADA 1 E O CSS DE INTRO POR ESTE -->
+<!-- 1. ADICIONE ESTE CSS PARA O NOVO MODAL (MODAL DE FEEDBACK) -->
 <style>
-    /* CSS REFINADO PARA APRESENTAÇÃO */
-    #intro-layer {
-        position: fixed;
-        inset: 0;
-        z-index: 2000;
-        background: radial-gradient(circle at center, #2c3e50 0%, #000 100%);
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        transition: opacity 1.5s cubic-bezier(0.4, 0, 0.2, 1), visibility 1.5s;
+    /* MODAL DE FEEDBACK ACADÊMICO (Nível 100) */
+    #feedback-modal {
+        display: none; position: fixed; inset: 0; z-index: 3000;
+        background: rgba(0,0,0,0.85); align-items: center; justify-content: center;
+        backdrop-filter: blur(5px);
     }
-
-    .book-container {
-        perspective: 1200px;
-        width: 280px;
-        height: 380px;
-        cursor: pointer;
-        animation: float 4s ease-in-out infinite;
+    .modal-box {
+        background: var(--parchment); border: 3px double var(--ink);
+        width: 85%; max-width: 350px; padding: 30px; text-align: center;
+        box-shadow: 0 0 50px rgba(0,0,0,0.5); transform: scale(0.8);
+        transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     }
-
-    @keyframes float {
-        0%, 100% { transform: translateY(0) rotateX(5deg); }
-        50% { transform: translateY(-15px) rotateX(10deg); }
-    }
-
-    .ancient-book {
-        width: 100%;
-        height: 100%;
-        background: var(--burgundy);
-        border: 4px solid var(--gold);
-        border-left: 15px solid #4a0a0a; /* Lombada reforçada */
-        border-radius: 5px 15px 15px 5px;
-        box-shadow: 25px 25px 60px rgba(0,0,0,0.8);
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: space-between;
-        padding: 40px 20px;
-        transform-style: preserve-3d;
-        transition: transform 1.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    }
-
-    .ancient-book:hover {
-        transform: rotateY(-25deg) scale(1.05);
-    }
-
-    .book-content {
-        text-align: center;
-        pointer-events: none;
-    }
-
-    .university-seal {
-        font-family: 'Cinzel';
-        font-size: 0.6rem;
-        letter-spacing: 3px;
-        color: var(--gold);
-        border-bottom: 1px solid var(--gold);
-        margin-bottom: 20px;
-        padding-bottom: 10px;
-    }
-
-    .main-title {
-        font-family: 'Cinzel';
-        font-size: 1.4rem;
-        color: var(--gold);
-        text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
-        margin: 20px 0;
-    }
-
-    .action-call {
-        font-family: 'Lora';
-        font-style: italic;
-        font-size: 0.7rem;
-        color: #fff;
-        opacity: 0.8;
-        letter-spacing: 1px;
-    }
-
-    /* ESTADO ABERTO */
-    .book-open {
-        transform: rotateY(-180deg) scale(1.5) !important;
-        opacity: 0;
+    .modal-box.active { transform: scale(1); }
+    .status-icon { font-size: 2.5rem; margin-bottom: 15px; }
+    .status-text { font-family: 'Cinzel'; font-size: 1.1rem; color: var(--burgundy); margin: 10px 0; }
+    .source-btn { 
+        margin-top: 20px; background: var(--ink); color: white; 
+        padding: 12px; width: 100%; border: none; font-family: 'Cinzel'; cursor: pointer;
     }
 </style>
 
-<!-- CAMADA 1: ABERTURA REPROJETADA -->
-<div id="intro-layer">
-    <div class="book-container" onclick="handleBookOpen(this)">
-        <div class="ancient-book" id="physical-book">
-            <div class="book-content">
-                <div class="university-seal">UFPB • BIBLIOTECONOMIA</div>
-                <h1 class="main-title">BIBLIOQUIZ<br>LEGACY</h1>
-            </div>
-            <div class="action-call">Toque para desbravar o acervo</div>
-        </div>
+<!-- 2. INSIRA ESTE HTML NO FINAL DO BODY -->
+<div id="feedback-modal">
+    <div class="modal-box" id="modal-content">
+        <div id="modal-icon" class="status-icon"></div>
+        <div id="modal-status" class="status-text"></div>
+        <p id="modal-msg" style="font-size: 0.85rem; font-style: italic; color: #555;"></p>
+        <button class="source-btn" onclick="closeFeedback()">Prosseguir Pesquisa</button>
     </div>
 </div>
 
+<!-- 3. SUBSTITUA A FUNÇÃO 'check' E O 'repo' NO SEU SCRIPT -->
 <script>
-    // LÓGICA DE APRESENTAÇÃO CORRIGIDA
-    function handleBookOpen(container) {
-        const book = document.getElementById('physical-book');
-        const layer = document.getElementById('intro-layer');
-        const flipSnd = document.getElementById('flip-snd');
+    // Banco de Dados com Personagens (Curadoria Acadêmica)
+    const repo = {
+        graduacao: [
+            { a: "Normalização", p: "Cássia Furtado", q: "A NBR 6023:2018 trata especificamente de:", o: ["Sumários", "Citações", "Referências", "Índices"], r: 2, msg: "A organização das fontes é o pilar da ciência." },
+            { a: "Leis de Ranganathan", p: "S.R. Ranganathan", q: "Qual a 2ª Lei da Biblioteconomia?", o: ["Livros são para uso", "Para cada leitor, seu livro", "Poupe o tempo do leitor", "A biblioteca é um organismo"], r: 1, msg: "O conhecimento deve alcançar a todos." }
+        ],
+        mestrado: [
+            { a: "Documentação", p: "Paul Otlet", q: "Quem é considerado o pai da Documentação?", o: ["Dewey", "Cutter", "Paul Otlet", "Lafontaine"], r: 2, msg: "Classificar é compreender o mundo." }
+        ]
+    };
 
-        // Play no som de papel
-        if(flipSnd) flipSnd.play();
-
-        // Animação de abertura
-        book.classList.add('book-open');
+    function loadQuestion() {
+        const data = repo[game.lvl][game.idx];
+        document.getElementById('area-badge').innerText = data.a;
+        // Exibe o personagem que está perguntando
+        document.getElementById('q-text').innerHTML = `<span style="color: var(--burgundy); font-size: 0.7rem; display: block; margin-bottom: 5px;">${data.p} questiona:</span>${data.q}`;
         
-        // Transição para a Home
+        document.getElementById('turn-info').innerText = game.mode === 'p2' ? `VEZ DO PESQUISADOR ${game.turn}` : "SISTEMA ATIVO";
+        
+        const container = document.getElementById('options-container');
+        container.innerHTML = '';
+        data.o.forEach((opt, i) => {
+            const b = document.createElement('button');
+            b.className = 'btn-mode';
+            b.style.fontSize = '0.85rem';
+            b.innerText = opt;
+            b.onclick = () => check(i, data.r, data.msg);
+            container.appendChild(b);
+        });
+    }
+
+    function check(chosen, correct, personalMsg) {
+        const modal = document.getElementById('feedback-modal');
+        const mContent = document.getElementById('modal-content');
+        const mIcon = document.getElementById('modal-icon');
+        const mStatus = document.getElementById('modal-status');
+        const mMsg = document.getElementById('modal-msg');
+
+        modal.style.display = 'flex';
+        setTimeout(() => mContent.classList.add('active'), 10);
+
+        if(chosen === correct) {
+            if(game.turn === 1) game.s1++; else game.s2++;
+            mIcon.innerText = "📜";
+            mStatus.innerText = "PRECISÃO CIENTÍFICA";
+            mMsg.innerText = personalMsg;
+        } else {
+            mIcon.innerText = "⚠️";
+            mStatus.innerText = "DIVERGÊNCIA DOCUMENTAL";
+            mMsg.innerText = "A fonte citada não corresponde ao registro.";
+        }
+        updateHUD();
+    }
+
+    function closeFeedback() {
+        const modal = document.getElementById('feedback-modal');
+        const mContent = document.getElementById('modal-content');
+        mContent.classList.remove('active');
+        
         setTimeout(() => {
-            layer.style.opacity = '0';
-            layer.style.visibility = 'hidden';
-            
-            // Ativa a Home Screen
-            const home = document.getElementById('home-screen');
-            if(home) {
-                home.style.display = 'flex';
-                home.style.animation = 'fadeIn 1s forwards';
+            modal.style.display = 'none';
+            game.idx++;
+            if(game.mode === 'p2') game.turn = game.turn === 1 ? 2 : 1;
+
+            if(repo[game.lvl] && repo[game.lvl][game.idx]) {
+                loadQuestion();
+            } else {
+                alert(`Ciclo Acadêmico Completo!\nPontuação Final: P1: ${game.s1} | P2: ${game.s2}`);
+                location.reload();
             }
-        }, 1000);
+        }, 300);
     }
 </script>
