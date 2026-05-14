@@ -1,0 +1,9 @@
+{
+  "name": "BiblioQuiz Pro",
+  "short_name": "BiblioQuiz",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#1a1a1a",
+  "theme_color": "#9b59b6",
+  "icons": [{"src": "https://img.icons8.com/ios-filled/512/9b59b6/book.png", "sizes": "512x512", "type": "image/png"}]
+}
