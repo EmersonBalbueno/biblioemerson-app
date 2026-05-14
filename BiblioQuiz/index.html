@@ -3,159 +3,130 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>BiblioQuiz Legacy</title>
+    <title>BiblioQuiz Legacy v100</title>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Lora:ital,wght@0,400;1,700&display=swap" rel="stylesheet">
     <style>
         :root { --gold: #d4af37; --ink: #1a1a1a; --parchment: #fdfaf3; --burgundy: #630d0d; }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        body, html { margin: 0; padding: 0; height: 100%; width: 100%; font-family: 'Lora', serif; background: #000; overflow: hidden; }
+        
+        /* RESET TOTAL PARA EVITAR TELA BRANCA */
+        body, html { 
+            margin: 0; padding: 0; height: 100%; width: 100%; 
+            font-family: 'Lora', serif; background: #000; overflow: hidden; 
+        }
 
-        /* ABERTURA BLINDADA */
+        /* CAMADA DE ENTRADA (ESTÁTICA POR SEGURANÇA) */
         #intro-layer {
-            position: fixed; inset: 0; z-index: 5000;
-            background: radial-gradient(circle at center, #1e272e 0%, #000 100%);
+            position: fixed; inset: 0; z-index: 9999;
+            background: radial-gradient(circle, #2c3e50, #000);
             display: flex; align-items: center; justify-content: center;
-            transition: opacity 0.8s ease;
         }
-        .book-anchor {
-            width: 280px; height: 400px; position: relative;
-            perspective: 1500px;
-        }
-        .ancient-book {
-            width: 100%; height: 100%; background: var(--burgundy);
+
+        .book-card {
+            width: 280px; height: 400px; background: var(--burgundy);
             border: 4px solid var(--gold); border-left: 15px solid #4a0a0a;
-            border-radius: 5px 15px 15px 5px; box-shadow: 0 20px 50px rgba(0,0,0,0.9);
-            display: flex; flex-direction: column; align-items: center; justify-content: space-around;
-            padding: 40px 20px; text-align: center; color: var(--gold);
-            transform-origin: left center; transition: transform 1s cubic-bezier(0.4, 0, 0.2, 1);
+            border-radius: 5px 15px 15px 5px; box-shadow: 0 0 50px rgba(0,0,0,0.8);
+            display: flex; flex-direction: column; align-items: center; justify-content: space-between;
+            padding: 40px 20px; text-align: center; color: var(--gold); cursor: pointer;
+            transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
         }
-        .book-open-anim { transform: rotateY(-160deg) scale(1.2); opacity: 0; pointer-events: none; }
 
-        /* HOME DASHBOARD - CORREÇÃO DE TAMANHO */
+        /* HOME SCREEN - GARANTIA DE EXIBIÇÃO */
         #home-screen {
-            display: none; width: 100%; height: 100vh; position: relative;
-            background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), 
-                        url('https://images.unsplash.com/photo-1507842217343-583bb7270b66?q=80&w=2000') center/cover;
+            display: none; width: 100%; height: 100%; 
+            background: #fdfaf3; /* Fundo sólido para segurança */
             flex-direction: column; align-items: center; justify-content: center;
-        }
-        .glass-panel {
-            background: rgba(253, 250, 243, 0.96); width: 90%; max-width: 400px;
-            padding: 30px; border: 3px double var(--ink); border-radius: 4px;
-            box-shadow: 0 0 40px rgba(0,0,0,0.5); text-align: center;
+            padding: 20px;
         }
 
-        /* COMPONENTES DE INTERAÇÃO */
+        .glass-panel {
+            background: white; width: 100%; max-width: 380px;
+            padding: 30px; border: 3px double var(--ink); border-radius: 2px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2); text-align: center;
+        }
+
         .btn-nav {
-            width: 100%; padding: 14px; margin: 8px 0; border: 1px solid var(--ink);
+            width: 100%; padding: 15px; margin: 8px 0; border: 1px solid var(--ink);
             background: #fff; font-family: 'Cinzel'; font-size: 0.8rem; cursor: pointer;
         }
         .btn-nav.active { background: var(--gold); color: white; border-color: white; }
+
         .btn-start { 
             width: 100%; padding: 18px; margin-top: 20px; background: var(--burgundy);
             color: white; font-family: 'Cinzel'; border: none; font-weight: bold;
-            display: none; animation: fadeIn 0.5s;
+            display: none;
         }
 
-        /* MODAL DE FEEDBACK (SUBSTITUTO DO ALERT) */
+        /* MODAL DE FEEDBACK INTERNO (Adeus Alerts do Navegador) */
         #feedback-modal {
-            display: none; position: fixed; inset: 0; z-index: 6000;
+            display: none; position: fixed; inset: 0; z-index: 10000;
             background: rgba(0,0,0,0.9); align-items: center; justify-content: center;
         }
         .modal-box {
             background: var(--parchment); border: 2px solid var(--gold);
-            width: 85%; padding: 30px; text-align: center;
+            width: 85%; max-width: 350px; padding: 30px; text-align: center;
         }
-
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     </style>
 </head>
 <body>
 
-    <!-- CAMADA 1: ABERTURA -->
-    <div id="intro-layer">
-        <div class="book-anchor" onclick="openLegacy(this)">
-            <div class="ancient-book" id="main-book">
-                <div style="border-bottom: 1px solid var(--gold); width: 100%; padding-bottom: 10px; font-size: 0.6rem;">UFPB ACADÊMICO</div>
-                <h1 style="font-family: 'Cinzel'; font-size: 1.5rem;">BIBLIOQUIZ<br>LEGACY</h1>
-                <p style="font-style: italic; font-size: 0.7rem; color: #fff;">Toque para abrir o acervo</p>
-            </div>
+    <!-- CAMADA 1: ABERTURA (Simples e Eficaz) -->
+    <div id="intro-layer" onclick="launch()">
+        <div class="book-card" id="book-element">
+            <div style="border-bottom: 1px solid var(--gold); width: 100%; padding-bottom: 10px; font-size: 0.6rem;">UFPB ACADÊMICO</div>
+            <h1 style="font-family: 'Cinzel'; font-size: 1.4rem;">BIBLIOQUIZ<br>LEGACY</h1>
+            <p style="font-style: italic; font-size: 0.7rem; color: #fff;">Toque para Pesquisar</p>
         </div>
     </div>
 
-    <!-- CAMADA 2: HOME -->
+    <!-- CAMADA 2: HOME (Carregamento Prioritário) -->
     <div id="home-screen">
         <div class="glass-panel">
-            <h2 style="font-family: 'Cinzel'; color: var(--burgundy); margin-bottom: 5px;">Portal de Pesquisa</h2>
-            <p style="font-size: 0.7rem; margin-bottom: 20px;">Defina o ciclo e o modo de confronto.</p>
+            <h2 style="font-family: 'Cinzel'; color: var(--burgundy); margin: 0;">Portal de Acesso</h2>
+            <p style="font-size: 0.7rem; margin-bottom: 20px;">Selecione sua trajetória acadêmica.</p>
             
             <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 5px;">
-                <button class="btn-nav" onclick="set('lvl', 'graduacao', this)">GRAD</button>
-                <button class="btn-nav" onclick="set('lvl', 'mestrado', this)">MESTR</button>
-                <button class="btn-nav" onclick="set('lvl', 'doutorado', this)">DOUT</button>
+                <button class="btn-nav" onclick="pick('lvl', 'graduacao', this)">GRAD</button>
+                <button class="btn-nav" onclick="pick('lvl', 'mestrado', this)">MESTR</button>
+                <button class="btn-nav" onclick="pick('lvl', 'doutorado', this)">DOUT</button>
             </div>
 
-            <div style="margin-top: 15px;">
-                <button class="btn-nav" onclick="set('mode', 'solo', this)">SOLO VS CPU</button>
-                <button class="btn-nav" onclick="set('mode', 'p2', this)">DUELO (P2)</button>
+            <div style="margin-top: 10px;">
+                <button class="btn-nav" onclick="pick('mode', 'solo', this)">SOLO VS CPU</button>
+                <button class="btn-nav" onclick="pick('mode', 'p2', this)">DUELO (P2)</button>
             </div>
 
-            <button id="start-btn" class="btn-start" onclick="initGame()">INICIAR CICLO</button>
+            <button id="start-btn" class="btn-start" onclick="alert('Iniciando sistema...')">INICIAR CICLO</button>
         </div>
     </div>
-
-    <!-- MODAL DE FEEDBACK -->
-    <div id="feedback-modal">
-        <div class="modal-box">
-            <div id="f-icon" style="font-size: 2rem;"></div>
-            <h3 id="f-title" style="font-family: 'Cinzel'; color: var(--burgundy);"></h3>
-            <p id="f-msg" style="font-style: italic; font-size: 0.9rem;"></p>
-            <button class="btn-nav" style="background: var(--ink); color: #fff;" onclick="next()">Continuar</button>
-        </div>
-    </div>
-
-    <audio id="snd-flip" src="https://www.soundjay.com/misc/sounds/page-flip-01a.mp3"></audio>
 
     <script>
-        let state = { lvl: '', mode: '', s1: 0, s2: 0, turn: 1, idx: 0 };
-        const repo = {
-            graduacao: [{ p: "Cássia Furtado", q: "O que define a NBR 6023?", o: ["Referências", "Citações", "Sumário", "Índice"], r: 0, m: "A base da pesquisa é a fonte." }],
-            mestrado: [{ p: "Paul Otlet", q: "Qual o foco da CDU?", o: ["Hierarquia", "Facetas", "Universalidade", "Mecânica"], r: 2, m: "Toda informação é conectada." }]
-        };
+        let config = { lvl: '', mode: '' };
 
-        function openLegacy() {
-            document.getElementById('snd-flip').play();
-            document.getElementById('main-book').classList.add('book-open-anim');
+        function launch() {
+            const book = document.getElementById('book-element');
+            const intro = document.getElementById('intro-layer');
+            const home = document.getElementById('home-screen');
+
+            // Animação de saída rápida
+            book.style.transform = "scale(0.8) rotateY(-20deg)";
+            book.style.opacity = "0";
+            
             setTimeout(() => {
-                document.getElementById('intro-layer').style.opacity = '0';
-                setTimeout(() => {
-                    document.getElementById('intro-layer').style.display = 'none';
-                    document.getElementById('home-screen').style.display = 'flex';
-                }, 500);
-            }, 600);
+                intro.style.display = "none";
+                home.style.display = "flex";
+            }, 400);
         }
 
-        function set(type, val, el) {
-            el.parentElement.querySelectorAll('button').forEach(b => b.classList.remove('active'));
+        function pick(type, val, el) {
+            const container = el.parentElement;
+            container.querySelectorAll('button').forEach(b => b.classList.remove('active'));
             el.classList.add('active');
-            state[type] = val;
-            if(state.lvl && state.mode) document.getElementById('start-btn').style.display = 'block';
-        }
-
-        function initGame() {
-            // Lógica para carregar a primeira questão baseada no nível escolhido
-            alert("Ciclo iniciado: " + state.lvl.toUpperCase());
-            // Aqui você integraria a área de jogo como nas versões anteriores
-        }
-
-        function showFeedback(win, msg) {
-            document.getElementById('feedback-modal').style.display = 'flex';
-            document.getElementById('f-icon').innerText = win ? "📜" : "⚠️";
-            document.getElementById('f-title').innerText = win ? "PRECISÃO CIENTÍFICA" : "DIVERGÊNCIA";
-            document.getElementById('f-msg').innerText = msg;
-        }
-
-        function next() {
-            document.getElementById('feedback-modal').style.display = 'none';
+            config[type] = val;
+            
+            if(config.lvl && config.mode) {
+                document.getElementById('start-btn').style.display = 'block';
+            }
         }
     </script>
 </body>
