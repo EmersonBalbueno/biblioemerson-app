@@ -3,93 +3,136 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BiblioQuiz Pro</title>
+    <title>BiblioQuiz: A Odisseia do Conhecimento</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
         :root { --lilac: #9b59b6; --gold: #d4af37; --parchment: #f2e8c9; --marrom: #5d4037; }
-        body, html { margin: 0; padding: 0; height: 100%; font-family: 'Segoe UI', sans-serif; overflow: hidden; background: #1a1a1a; }
+        body, html { margin: 0; padding: 0; height: 100%; font-family: 'Cinzel', serif; overflow: hidden; background: #1a1a1a; }
         #viewport {
             width: 100vw; height: 100vh; display: flex; align-items: center; justify-content: center;
-            background-image: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('https://images.unsplash.com/photo-1507842217343-583bb7270b66?auto=format&fit=crop&q=80&w=2000');
-            background-size: cover; background-position: center;
+            background-image: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('https://images.unsplash.com/photo-1507842217343-583bb7270b66?auto=format&fit=crop&q=80&w=2000');
+            background-size: cover; transition: 2s;
         }
-        .hud { position: absolute; top: 20px; width: 90%; display: flex; justify-content: space-between; color: white; z-index: 10; font-size: 1.2rem; }
-        .timer { width: 60px; height: 60px; border: 3px solid var(--gold); border-radius: 50%; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.8); }
-        .card { width: 320px; min-height: 450px; background: var(--parchment); border-radius: 20px; border: 4px solid var(--gold); padding: 20px; box-shadow: 0 20px 40px rgba(0,0,0,0.8); position: relative; }
-        .persona-header { color: var(--marrom); font-weight: bold; border-bottom: 2px solid var(--gold); margin-bottom: 15px; padding-bottom: 5px; }
-        .option { background: white; border: 2px solid #ddd; padding: 12px; margin: 8px 0; border-radius: 10px; cursor: pointer; transition: 0.3s; }
-        .option:hover { background: var(--lilac); color: white; border-color: var(--lilac); }
+        .hud { position: absolute; top: 20px; width: 90%; display: flex; justify-content: space-between; color: white; z-index: 10; }
+        .timer { width: 60px; height: 60px; border: 3px solid var(--gold); border-radius: 50%; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.8); font-weight: bold; }
+        .card { width: 350px; min-height: 500px; background: var(--parchment); border-radius: 15px; border: 5px solid var(--gold); padding: 25px; box-shadow: 0 20px 50px rgba(0,0,0,0.9); box-sizing: border-box; }
+        .level-tag { background: var(--marrom); color: var(--gold); padding: 5px 10px; border-radius: 5px; font-size: 0.8rem; margin-bottom: 10px; display: inline-block; }
+        .persona { font-style: italic; font-weight: bold; border-bottom: 2px solid var(--gold); margin-bottom: 15px; color: var(--marrom); }
+        .option { background: rgba(255,255,255,0.7); border: 1px solid #ccc; padding: 12px; margin: 8px 0; border-radius: 8px; cursor: pointer; transition: 0.3s; font-size: 0.9rem; }
+        .option:hover { background: var(--lilac); color: white; transform: scale(1.02); }
+        .curiosity { font-size: 0.75rem; color: #666; margin-top: 20px; border-top: 1px dashed #aaa; padding-top: 10px; font-style: italic; }
+        .surprise-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); color: var(--gold); display: none; flex-direction: column; align-items: center; justify-content: center; text-align: center; z-index: 20; padding: 20px; border-radius: 10px; }
     </style>
 </head>
 <body>
     <div class="hud">
-        <div>Reputação: <span id="score">0</span></div>
+        <div>Nível: <span id="level-txt">Graduação</span><br>Pontos: <span id="score">0</span></div>
         <div class="timer" id="timer">30</div>
     </div>
     <div id="viewport">
-        <div class="card" id="game-card">
-            <div id="persona" class="persona-header">Carregando...</div>
-            <div id="q-text" style="font-size: 1.1rem; margin-bottom: 20px;">Preparando biblioteca...</div>
+        <div class="card">
+            <div id="surprise-box" class="surprise-overlay"></div>
+            <div class="level-tag" id="difficulty">MÉDIO</div>
+            <div id="persona" class="persona">Carregando...</div>
+            <div id="q-text" style="font-weight: bold; margin-bottom: 15px;">Aguarde...</div>
             <div id="options"></div>
+            <div id="curiosity" class="curiosity"></div>
         </div>
     </div>
 
     <script>
-        let score = 0;
-        let currentQ = 0;
-        let timeLeft = 30;
+        let score = 0, currentIdx = 0, level = "Graduação", timeLeft = 30, timer;
 
         const banco = [
-            { p: "Calímaco pergunta:", q: "Qual o nome do catálogo de Alexandria?", o: ["Pinakes", "Index", "BDTD", "CDD"], a: 0 },
-            { p: "Ranganathan pergunta:", q: "Qual a 5ª Lei?", o: ["Livros são para uso", "Organismo em crescimento", "Poupe o tempo", "Cada leitor seu livro"], a: 1 },
-            { p: "Escriba de Ebla pergunta:", q: "Onde eram feitos os registros?", o: ["Papiro", "Papel", "Tabletes de Argila", "Paredes"], a: 2 }
+            // GRADUAÇÃO
+            { lvl: "Graduação", dif: "Médio", p: "Ranganathan pergunta:", q: "Qual a 2ª Lei da Biblioteconomia?", o: ["Livros para uso", "A cada leitor seu livro", "Poupe o tempo", "Organismo em crescimento"], a: 1, c: "Significa que a biblioteca deve atender a todos, sem distinção.", r: "Fonte: Ranganathan (1931)." },
+            { lvl: "Graduação", dif: "Difícil", p: "Cutter pergunta:", q: "Na Tabela Cutter, a letra inicial seguida de números serve para:", o: ["Classificar o assunto", "Individualizar o autor", "Definir o ano", "Indicar a editora"], a: 1, c: "Cutter criou isso para evitar que livros do mesmo assunto fiquem desordenados.", r: "Fonte: Tabela Cutter-Sanborn." },
+            { lvl: "Graduação", dif: "Muito Difícil", p: "Mey pergunta:", q: "O campo MARC 245 subcampo $c refere-se a:", o: ["Título principal", "Título variante", "Indicação de responsabilidade", "Edição"], a: 2, c: "É onde colocamos os autores e colaboradores do item.", r: "Fonte: MARC 21 Formato Bibliográfico." },
+            
+            // MESTRADO
+            { lvl: "Mestrado", dif: "Difícil", p: "Paul Otlet pergunta:", q: "O conceito de 'Monográfico' no Tratado de Documentação refere-se a:", o: ["Apenas livros", "Unidade de informação processada", "Ficção científica", "Manuscritos"], a: 1, c: "Otlet via o documento como algo que ultrapassa o papel.", r: "Fonte: Otlet (1934)." },
+            
+            // DOUTORADO
+            { lvl: "Doutorado", dif: "Muito Difícil", p: "Saracevic pergunta:", q: "Na Ciência da Informação, a 'Relevância' é considerada um conceito:", o: ["Estático", "Puramente matemático", "Multidimensional e dinâmico", "Irrelevante"], a: 2, c: "A relevância depende do contexto do usuário e do momento da busca.", r: "Fonte: Saracevic (1996)." }
         ];
 
-        function loadQuestion() {
-            if(currentQ >= banco.length) {
-                alert("Fim da jornada! Sua reputação final: " + score);
-                location.reload();
-                return;
-            }
-            const data = banco[currentQ];
+        const surpresas = [
+            { tipo: "ruim", msg: "Você está falando muito nas aulas! Fique uma vez sem jogar.", efeito: -15, icon: "🚫" },
+            { tipo: "bom", msg: "Você achou um manuscrito raro na Biblioteca de Alexandria!", efeito: 30, icon: "📜" },
+            { tipo: "ruim", msg: "Sua devolução está atrasada! Perca 10 pontos.", efeito: -10, icon: "⏳" },
+            { tipo: "bom", msg: "Você publicou um artigo no Periódico CAPES! +25 pontos.", efeito: 25, icon: "🎓" }
+        ];
+
+        function startTimer() {
+            clearInterval(timer);
+            timeLeft = 30;
+            timer = setInterval(() => {
+                timeLeft--;
+                document.getElementById('timer').innerText = timeLeft;
+                if(timeLeft <= 0) { clearInterval(timer); next(); }
+            }, 1000);
+        }
+
+        function load() {
+            const data = banco[currentIdx];
+            document.getElementById('level-txt').innerText = data.lvl;
+            document.getElementById('difficulty').innerText = data.dif;
             document.getElementById('persona').innerText = data.p;
             document.getElementById('q-text').innerText = data.q;
-            const container = document.getElementById('options');
-            container.innerHTML = '';
+            document.getElementById('curiosity').innerText = "Curiosidade: " + data.c;
+            
+            const opts = document.getElementById('options');
+            opts.innerHTML = '';
             data.o.forEach((opt, i) => {
-                const div = document.createElement('div');
-                div.className = 'option';
-                div.innerText = opt;
-                div.onclick = () => check(i);
-                container.appendChild(div);
+                const btn = document.createElement('div');
+                btn.className = 'option';
+                btn.innerText = opt;
+                btn.onclick = () => check(i);
+                opts.appendChild(btn);
             });
+            startTimer();
         }
 
         function check(i) {
-            if(i === banco[currentQ].a) {
-                score += 10;
-                alert("Correto! +10 de Reputação.");
+            if(i === banco[currentIdx].a) {
+                score += 15;
+                alert("Correto! Suas fontes são confiáveis.");
             } else {
                 score -= 5;
-                alert("Errado! Você perdeu prestígio acadêmico.");
+                alert("Erro de catalogação! Verifique suas fontes.");
             }
             document.getElementById('score').innerText = score;
-            currentQ++;
-            loadQuestion();
+            
+            // Trigger de carta surpresa a cada 2 questões
+            if(currentIdx % 2 === 1) triggerSurprise();
+            else next();
         }
 
-        setInterval(() => {
-            if(timeLeft > 0) {
-                timeLeft--;
-                document.getElementById('timer').innerText = timeLeft;
-            } else {
-                alert("O tempo acabou!");
-                location.reload();
-            }
-        }, 1000);
+        function triggerSurprise() {
+            const s = surpresas[Math.floor(Math.random() * surpresas.length)];
+            const box = document.getElementById('surprise-box');
+            box.innerHTML = `<h1>${s.icon}</h1><p>${s.msg}</p><button onclick="closeSurprise()" style="padding:10px; background:var(--gold); border:none; border-radius:5px; cursor:pointer;">Continuar Jornada</button>`;
+            box.style.display = 'flex';
+            score += s.efeito;
+            document.getElementById('score').innerText = score;
+        }
 
-        loadQuestion();
+        function closeSurprise() {
+            document.getElementById('surprise-box').style.display = 'none';
+            next();
+        }
+
+        function next() {
+            currentIdx++;
+            if(currentIdx >= banco.length) {
+                alert("Você completou a Odisseia! Pontuação: " + score);
+                currentIdx = 0;
+                score = 0;
+            }
+            load();
+        }
+
+        window.onload = load;
     </script>
 </body>
-</html>
 </html>
