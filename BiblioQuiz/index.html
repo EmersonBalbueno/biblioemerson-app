@@ -6,59 +6,90 @@
     <title>BiblioQuiz Pro</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
-        :root {
-            --lilac: #9b59b6; --gold: #d4af37; --parchment: #f2e8c9;
-            --marrom: #5d4037; --verde: #2e7d32; --vermelho: #c62828;
-        }
+        :root { --lilac: #9b59b6; --gold: #d4af37; --parchment: #f2e8c9; --marrom: #5d4037; }
         body, html { margin: 0; padding: 0; height: 100%; font-family: 'Segoe UI', sans-serif; overflow: hidden; background: #1a1a1a; }
         #viewport {
-            width: 100vw; height: 100vh; transition: 2s ease-in-out;
+            width: 100vw; height: 100vh; display: flex; align-items: center; justify-content: center;
             background-image: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('https://images.unsplash.com/photo-1507842217343-583bb7270b66?auto=format&fit=crop&q=80&w=2000');
-            background-size: cover; background-position: center; display: flex;
-            align-items: center; justify-content: center; position: relative;
+            background-size: cover; background-position: center;
         }
-        .hud { position: absolute; top: 20px; width: 90%; display: flex; justify-content: space-between; color: white; z-index: 10; }
-        .timer { width: 60px; height: 60px; border: 3px solid var(--gold); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; background: rgba(0,0,0,0.8); }
-        .deck { perspective: 1500px; width: 320px; height: 480px; }
-        .card { width: 100%; height: 100%; position: relative; transition: transform 0.8s; transform-style: preserve-3d; cursor: pointer; }
-        .card.flipped { transform: rotateY(180deg); }
-        .card-face { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; border-radius: 20px; box-shadow: 0 20px 40px rgba(0,0,0,0.8); padding: 25px; display: flex; flex-direction: column; border: 4px solid var(--gold); box-sizing: border-box; }
-        .card-front { background: var(--marrom); color: var(--gold); justify-content: center; text-align: center; }
-        .card-back { transform: rotateY(180deg); background: var(--parchment); color: #2c3e50; }
-        .option { background: rgba(0,0,0,0.05); border: 1px solid #aaa; padding: 10px; margin: 5px 0; border-radius: 8px; cursor: pointer; font-size: 0.9rem; }
-        .option:hover { background: var(--lilac); color: white; }
+        .hud { position: absolute; top: 20px; width: 90%; display: flex; justify-content: space-between; color: white; z-index: 10; font-size: 1.2rem; }
+        .timer { width: 60px; height: 60px; border: 3px solid var(--gold); border-radius: 50%; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.8); }
+        .card { width: 320px; min-height: 450px; background: var(--parchment); border-radius: 20px; border: 4px solid var(--gold); padding: 20px; box-shadow: 0 20px 40px rgba(0,0,0,0.8); position: relative; }
+        .persona-header { color: var(--marrom); font-weight: bold; border-bottom: 2px solid var(--gold); margin-bottom: 15px; padding-bottom: 5px; }
+        .option { background: white; border: 2px solid #ddd; padding: 12px; margin: 8px 0; border-radius: 10px; cursor: pointer; transition: 0.3s; }
+        .option:hover { background: var(--lilac); color: white; border-color: var(--lilac); }
     </style>
 </head>
 <body>
     <div class="hud">
-        <div>Score: <span id="score">0</span></div>
+        <div>Reputação: <span id="score">0</span></div>
         <div class="timer" id="timer">30</div>
     </div>
     <div id="viewport">
-        <div class="deck">
-            <div class="card" id="main-card" onclick="this.classList.toggle('flipped')">
-                <div class="card-face card-front">
-                    <i class="fas fa-book-open fa-3x"></i>
-                    <h2>BIBLIOQUIZ</h2>
-                    <p>Toque para Iniciar</p>
-                </div>
-                <div class="card-face card-back">
-                    <div id="q-text" style="font-weight:bold; margin-bottom:15px;">Pergunta...</div>
-                    <div id="options"></div>
-                </div>
-            </div>
+        <div class="card" id="game-card">
+            <div id="persona" class="persona-header">Carregando...</div>
+            <div id="q-text" style="font-size: 1.1rem; margin-bottom: 20px;">Preparando biblioteca...</div>
+            <div id="options"></div>
         </div>
     </div>
+
     <script>
-        if ('serviceWorker' in navigator) { navigator.serviceWorker.register('./sw.js'); }
         let score = 0;
-        const q = { q: "O que é AACR2?", opts: ["Código de Catalogação", "Norma de Papel", "Software", "Nenhuma"], ans: 0 };
-        document.getElementById('q-text').innerText = q.q;
-        q.opts.forEach((o, i) => {
-            const b = document.createElement('div'); b.className = 'option'; b.innerText = o;
-            b.onclick = (e) => { e.stopPropagation(); alert(i===q.ans?"Correto":"Errado"); };
-            document.getElementById('options').appendChild(b);
-        });
+        let currentQ = 0;
+        let timeLeft = 30;
+
+        const banco = [
+            { p: "Calímaco pergunta:", q: "Qual o nome do catálogo de Alexandria?", o: ["Pinakes", "Index", "BDTD", "CDD"], a: 0 },
+            { p: "Ranganathan pergunta:", q: "Qual a 5ª Lei?", o: ["Livros são para uso", "Organismo em crescimento", "Poupe o tempo", "Cada leitor seu livro"], a: 1 },
+            { p: "Escriba de Ebla pergunta:", q: "Onde eram feitos os registros?", o: ["Papiro", "Papel", "Tabletes de Argila", "Paredes"], a: 2 }
+        ];
+
+        function loadQuestion() {
+            if(currentQ >= banco.length) {
+                alert("Fim da jornada! Sua reputação final: " + score);
+                location.reload();
+                return;
+            }
+            const data = banco[currentQ];
+            document.getElementById('persona').innerText = data.p;
+            document.getElementById('q-text').innerText = data.q;
+            const container = document.getElementById('options');
+            container.innerHTML = '';
+            data.o.forEach((opt, i) => {
+                const div = document.createElement('div');
+                div.className = 'option';
+                div.innerText = opt;
+                div.onclick = () => check(i);
+                container.appendChild(div);
+            });
+        }
+
+        function check(i) {
+            if(i === banco[currentQ].a) {
+                score += 10;
+                alert("Correto! +10 de Reputação.");
+            } else {
+                score -= 5;
+                alert("Errado! Você perdeu prestígio acadêmico.");
+            }
+            document.getElementById('score').innerText = score;
+            currentQ++;
+            loadQuestion();
+        }
+
+        setInterval(() => {
+            if(timeLeft > 0) {
+                timeLeft--;
+                document.getElementById('timer').innerText = timeLeft;
+            } else {
+                alert("O tempo acabou!");
+                location.reload();
+            }
+        }, 1000);
+
+        loadQuestion();
     </script>
 </body>
+</html>
 </html>
