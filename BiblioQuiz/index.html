@@ -1,117 +1,517 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>BiblioQuiz vFinal</title>
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Lora&display=swap" rel="stylesheet">
-    <style>
-        :root { --gold: #d4af37; --ink: #1a1a1a; --burgundy: #630d0d; --paper: #fdfaf3; }
-        body { margin: 0; font-family: 'Lora', serif; background: #000; height: 100vh; display: flex; align-items: center; justify-content: center; overflow: hidden; }
-        .bg { position: fixed; inset: 0; background: url('https://images.unsplash.com/photo-1507842217343-583bb7270b66?q=80&w=2000') center/cover; opacity: 0.3; z-index: -1; }
-        
-        /* TELAS */
-        .card { background: var(--paper); width: 92%; max-width: 380px; padding: 25px; border: 2px solid var(--gold); text-align: center; box-shadow: 0 10px 40px #000; position: relative; z-index: 10; }
-        .hidden { display: none !important; }
-
-        h2 { font-family: 'Cinzel'; color: var(--burgundy); font-size: 1.1rem; margin-bottom: 20px; }
-        .btn { width: 100%; padding: 14px; margin: 4px 0; border: 1px solid var(--ink); background: #fff; font-family: 'Cinzel'; cursor: pointer; font-size: 0.8rem; }
-        .btn.active { background: var(--gold); color: #fff; border-color: #fff; }
-        .btn-go { background: var(--burgundy); color: #fff; font-weight: bold; margin-top: 15px; display: none; }
-        
-        /* JOGO */
-        .q-text { font-weight: bold; text-align: left; margin: 20px 0; font-size: 0.9rem; line-height: 1.4; }
-        .hud { display: flex; justify-content: space-between; font-family: 'Cinzel'; font-size: 0.65rem; border-bottom: 1px solid #ccc; padding-bottom: 8px; margin-bottom: 15px; }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>BiblioQuiz — Corrigido</title>
+<style>
+:root {
+  --gold: #d4af37;
+  --ink: #1a1a1a;
+  --burgundy: #630d0d;
+  --paper: #fdfaf3;
+  --green: #1b5e20;
+  --red: #b71c1c;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: Georgia, 'Times New Roman', serif;
+  background: radial-gradient(ellipse at center, #1a0a00 0%, #000 100%);
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px;
+}
+.card {
+  background: var(--paper);
+  width: 100%;
+  max-width: 400px;
+  padding: 28px 24px;
+  border: 2px solid var(--gold);
+  box-shadow: 0 0 0 6px rgba(212,175,55,0.1), 0 20px 60px rgba(0,0,0,0.8);
+  border-radius: 4px;
+  position: relative;
+}
+.card::before {
+  content: '';
+  position: absolute;
+  inset: 6px;
+  border: 1px solid rgba(212,175,55,0.3);
+  border-radius: 2px;
+  pointer-events: none;
+}
+.hidden { display: none !important; }
+h1 {
+  font-size: 1.4rem;
+  color: var(--burgundy);
+  text-align: center;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+h2 {
+  font-size: 0.85rem;
+  color: #888;
+  text-align: center;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-bottom: 20px;
+  font-weight: normal;
+}
+.divisor {
+  border: none;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  margin: 14px 0;
+  opacity: 0.6;
+}
+.secao-label {
+  font-size: 0.7rem;
+  color: #999;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  margin-bottom: 8px;
+  text-align: center;
+}
+.grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px; margin-bottom: 14px; }
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 14px; }
+.btn-sel {
+  padding: 12px 6px;
+  border: 1px solid #ccc;
+  background: #fff;
+  font-family: Georgia, serif;
+  font-size: 0.72rem;
+  cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  border-radius: 3px;
+  transition: all 0.2s;
+  color: var(--ink);
+}
+.btn-sel:hover { border-color: var(--gold); background: #fffbf0; }
+.btn-sel.ativo {
+  background: var(--burgundy);
+  color: #fff;
+  border-color: var(--burgundy);
+  box-shadow: 0 2px 8px rgba(99,13,13,0.4);
+}
+.btn-iniciar {
+  width: 100%;
+  padding: 14px;
+  background: linear-gradient(135deg, var(--burgundy), #8b1010);
+  color: #fff;
+  border: none;
+  font-family: Georgia, serif;
+  font-size: 0.9rem;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  cursor: pointer;
+  border-radius: 3px;
+  margin-top: 6px;
+  display: none;
+  transition: all 0.2s;
+}
+.btn-iniciar:hover { background: linear-gradient(135deg, #8b1010, var(--burgundy)); }
+.hud {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 10px;
+  margin-bottom: 14px;
+  border-bottom: 1px solid #ddd;
+  font-size: 0.7rem;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+.hud-pts { font-weight: bold; color: var(--ink); }
+.hud-turno { color: var(--burgundy); font-weight: bold; }
+.hud-prog { color: #999; }
+.q-numero {
+  font-size: 0.65rem;
+  color: #999;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  margin-bottom: 8px;
+}
+.q-texto {
+  font-size: 0.92rem;
+  color: var(--ink);
+  line-height: 1.6;
+  margin-bottom: 18px;
+  padding: 12px;
+  background: rgba(212,175,55,0.07);
+  border-left: 3px solid var(--gold);
+  border-radius: 0 4px 4px 0;
+}
+.opcoes { display: flex; flex-direction: column; gap: 8px; }
+.btn-opcao {
+  width: 100%;
+  padding: 12px 14px;
+  text-align: left;
+  border: 1px solid #ddd;
+  background: #fff;
+  font-family: Georgia, serif;
+  font-size: 0.82rem;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: all 0.15s;
+  color: var(--ink);
+  line-height: 1.4;
+}
+.btn-opcao:hover:not(:disabled) { border-color: var(--gold); background: #fffbf0; }
+.btn-opcao:disabled { cursor: default; }
+.btn-opcao.certa { background: rgba(27,94,32,0.12); border-color: var(--green); color: var(--green); }
+.btn-opcao.errada { background: rgba(183,28,28,0.08); border-color: var(--red); color: var(--red); }
+.feedback {
+  display: none;
+  padding: 10px 14px;
+  border-radius: 4px;
+  font-size: 0.82rem;
+  margin-top: 10px;
+  line-height: 1.5;
+}
+.feedback.certa { display: block; background: rgba(27,94,32,0.1); color: var(--green); border: 1px solid var(--green); }
+.feedback.errada { display: block; background: rgba(183,28,28,0.08); color: var(--red); border: 1px solid var(--red); }
+.btn-proxima {
+  display: none;
+  width: 100%;
+  padding: 12px;
+  margin-top: 12px;
+  background: var(--ink);
+  color: #fff;
+  border: none;
+  font-family: Georgia, serif;
+  font-size: 0.8rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  cursor: pointer;
+  border-radius: 3px;
+}
+.btn-proxima:hover { background: #333; }
+.resultado-nome { font-size: 1.1rem; color: var(--burgundy); font-weight: bold; margin: 8px 0; }
+.resultado-pts { font-size: 2rem; color: var(--gold); font-weight: bold; margin: 4px 0; }
+.resultado-linha { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #eee; font-size: 0.82rem; }
+.btn-reiniciar {
+  width: 100%;
+  padding: 12px;
+  margin-top: 16px;
+  background: var(--burgundy);
+  color: #fff;
+  border: none;
+  font-family: Georgia, serif;
+  font-size: 0.85rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  cursor: pointer;
+  border-radius: 3px;
+}
+.cpu-pensando {
+  text-align: center;
+  color: #999;
+  font-style: italic;
+  font-size: 0.82rem;
+  padding: 10px;
+  animation: piscar 0.8s ease-in-out infinite;
+}
+@keyframes piscar { 0%,100%{opacity:0.4;} 50%{opacity:1;} }
+.streak-bar { display: flex; gap: 4px; justify-content: center; margin: 10px 0 0; }
+.streak-dot { width: 9px; height: 9px; border-radius: 50%; background: #ddd; transition: background 0.3s; }
+.streak-dot.on { background: var(--gold); }
+</style>
 </head>
 <body>
-    <div class="bg"></div>
 
-    <!-- TELA INICIAL (Sincronizada com seu print) -->
-    <div id="screen-config" class="card">
-        <h2>PORTAL DE PESQUISA</h2>
-        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 4px;">
-            <button class="btn b-lvl" onclick="setVal('lvl', 'graduacao', this)">GRAD</button>
-            <button class="btn b-lvl" onclick="setVal('lvl', 'mestrado', this)">MESTR</button>
-            <button class="btn b-lvl" onclick="setVal('lvl', 'doutorado', this)">DOUT</button>
-        </div>
-        <div style="margin-top: 12px;">
-            <button class="btn b-mod" onclick="setVal('mode', 'solo', this)">SOLO VS CPU</button>
-            <button class="btn b-mod" onclick="setVal('mode', 'p2', this)">DUELO (P2)</button>
-        </div>
-        <button id="btn-start" class="btn btn-go" onclick="runGame()">INICIAR CICLO</button>
-    </div>
+<div id="tela-config" class="card">
+  <h1>📚 BiblioQuiz</h1>
+  <h2>Portal de Pesquisa</h2>
+  <hr class="divisor">
+  <div class="secao-label">Nível Acadêmico</div>
+  <div class="grid-3">
+    <button class="btn-sel b-lvl" onclick="selecionar('lvl','graduacao',this)">🎓 Grad.</button>
+    <button class="btn-sel b-lvl" onclick="selecionar('lvl','mestrado',this)">🔬 Mestr.</button>
+    <button class="btn-sel b-lvl" onclick="selecionar('lvl','doutorado',this)">🏛️ Dout.</button>
+  </div>
+  <div class="secao-label">Modo de Jogo</div>
+  <div class="grid-2">
+    <button class="btn-sel b-mod" onclick="selecionar('mode','solo',this)">🤖 Solo vs CPU</button>
+    <button class="btn-sel b-mod" onclick="selecionar('mode','p2',this)">👥 Duelo P1 vs P2</button>
+  </div>
+  <button id="btn-iniciar" class="btn-iniciar" onclick="iniciarJogo()">▶ Iniciar Ciclo</button>
+</div>
 
-    <!-- TELA DE QUESTÕES -->
-    <div id="screen-game" class="card hidden">
-        <div class="hud">
-            <span id="txt-score">P1: 0</span>
-            <span id="txt-turn" style="color:var(--burgundy)">VEZ DO P1</span>
-        </div>
-        <div id="q-box">
-            <div id="display-q" class="q-text"></div>
-            <div id="display-opts"></div>
-        </div>
-    </div>
+<div id="tela-jogo" class="card hidden">
+  <div class="hud">
+    <span class="hud-pts" id="txt-pts">P1: 0</span>
+    <span class="hud-turno" id="txt-turno">Vez do P1</span>
+    <span class="hud-prog" id="txt-prog">1/10</span>
+  </div>
+  <div class="q-numero" id="txt-qnum">Pergunta 1</div>
+  <div class="q-texto" id="txt-q">Carregando...</div>
+  <div class="opcoes" id="div-opcoes"></div>
+  <div class="feedback" id="div-feedback"></div>
+  <button class="btn-proxima" id="btn-proxima" onclick="proximaPergunta()">Próxima Pergunta →</button>
+  <div class="cpu-pensando hidden" id="cpu-msg">💻 CPU pensando...</div>
+  <div class="streak-bar" id="streak-bar"></div>
+</div>
 
-    <script>
-        let data = { lvl: '', mode: '', idx: 0, s1: 0, s2: 0, turn: 1 };
-        
-        const questions = {
-            graduacao: [
-                {q: "Na UFPB, qual autor é referência em Biblioteconomia Digital?", o: ["Cássia Furtado", "Melvil Dewey", "Paul Otlet"], a: 0},
-                {q: "O que significa a sigla BDTD?", o: ["Banco de Dados Têxteis", "Biblioteca Digital de Teses e Dissertações", "Base de Dados de Tecnologia"], a: 1}
-            ],
-            mestrado: [
-                {q: "Qual o foco da Teoria da Classificação Facetada?", o: ["Ranganathan", "Borko", "Luhn"], a: 0}
-            ]
-        };
+<div id="tela-resultado" class="card hidden">
+  <h1>🏆 Resultado Final</h1>
+  <hr class="divisor">
+  <div id="div-resultado"></div>
+  <button class="btn-reiniciar" onclick="reiniciar()">↺ Jogar Novamente</button>
+</div>
 
-        function setVal(type, val, el) {
-            document.querySelectorAll('.b-' + (type==='lvl'?'lvl':'mod')).forEach(b => b.classList.remove('active'));
-            el.classList.add('active');
-            data[type] = val;
-            if(data.lvl && data.mode) document.getElementById('btn-start').style.display = 'block';
-        }
+<script>
+const BANCO = {
+  graduacao: [
+    { q: "Quem criou o Sistema de Classificação Decimal de Dewey (CDD)?",
+      o: ["A) Paul Otlet", "B) S.R. Ranganathan", "C) Melvil Dewey", "D) Charles Cutter"], a: 2,
+      exp: "Melvil Dewey publicou o sistema CDD em 1876, aos 25 anos. É o sistema de classificação bibliográfica mais usado no mundo." },
+    { q: "A sigla BDTD significa:",
+      o: ["A) Banco de Dados Têxteis e Documentação", "B) Biblioteca Digital de Teses e Dissertações", "C) Base de Dados em Tecnologia Digital", "D) Biblioteca de Dados Técnicos e Didáticos"], a: 1,
+      exp: "A BDTD é mantida pelo IBICT e reúne teses e dissertações brasileiras. Ref: https://bdtd.ibict.br" },
+    { q: "Qual das 5 Leis de Ranganathan afirma 'A biblioteca é um organismo em crescimento'?",
+      o: ["A) 1ª Lei", "B) 3ª Lei", "C) 4ª Lei", "D) 5ª Lei"], a: 3,
+      exp: "A 5ª Lei de Ranganathan (1931) diz que a biblioteca é um organismo vivo, em constante crescimento e adaptação às necessidades dos usuários." },
+    { q: "O formato MARC 21 é utilizado em bibliotecas para:",
+      o: ["A) Controlar empréstimos", "B) Criar registros bibliográficos legíveis por máquina", "C) Digitalizar documentos", "D) Gerenciar o orçamento"], a: 1,
+      exp: "MARC 21 (Machine-Readable Cataloging) é o formato padrão para registros bibliográficos. Ref: https://www.loc.gov/marc/" },
+    { q: "A norma ABNT NBR 6023:2018 trata de:",
+      o: ["A) Apresentação de trabalhos acadêmicos", "B) Citações em documentos", "C) Elaboração de referências bibliográficas", "D) Resumos e resenhas"], a: 2,
+      exp: "A NBR 6023:2018 define critérios para elaboração de referências bibliográficas. Ref: https://www.abnt.org.br" },
+    { q: "O que é 'indexação' em Biblioteconomia?",
+      o: ["A) Compra de novos livros", "B) Análise de conteúdo e atribuição de termos representativos", "C) Organização física das estantes", "D) Controle de acervo por número de tombo"], a: 1,
+      exp: "Indexação é a análise do conteúdo de documentos e atribuição de termos para representar seus temas. Ref: LANCASTER, F.W. Indexing and abstracting. 2003." },
+    { q: "O ISBN identifica:",
+      o: ["A) Periódicos científicos", "B) Bases de dados online", "C) Livros e publicações monográficas", "D) Arquivos de imagem"], a: 2,
+      exp: "O ISBN (International Standard Book Number) é um identificador único para livros, composto por 13 dígitos. Ref: https://www.isbn-international.org" },
+    { q: "Competência informacional (information literacy) é a capacidade de:",
+      o: ["A) Memorizar grandes volumes de informação", "B) Reconhecer necessidades, localizar, avaliar e usar informação efetivamente", "C) Digitar rapidamente em computadores", "D) Catalogar documentos conforme AACR2"], a: 1,
+      exp: "A ALA definiu information literacy em 1989. Ref: https://www.ala.org/acrl/publications/whitepapers/presidential" },
+    { q: "Qual sigla representa a principal federação internacional de bibliotecas?",
+      o: ["A) UNESCO", "B) IFLA", "C) IBICT", "D) CFB"], a: 1,
+      exp: "A IFLA (International Federation of Library Associations and Institutions) foi fundada em 1927. Ref: https://www.ifla.org" },
+    { q: "O CFB (Conselho Federal de Biblioteconomia) foi criado pela:",
+      o: ["A) Lei nº 4.084/1962", "B) Lei nº 9.394/1996", "C) Lei nº 8.666/1993", "D) Lei nº 7.210/1984"], a: 0,
+      exp: "O CFB foi criado pela Lei nº 4.084, de 30 de junho de 1962. Ref: http://www.planalto.gov.br/ccivil_03/leis/1950-1969/L4084.htm" }
+  ],
+  mestrado: [
+    { q: "O modelo FRBR — Grupo 1 é composto por:",
+      o: ["A) Pessoa, Entidade Coletiva, Obra, Lugar", "B) Obra, Expressão, Manifestação e Item", "C) Conceito, Objeto, Evento e Lugar", "D) Título, Autor, Assunto e Editora"], a: 1,
+      exp: "O FRBR (IFLA, 1998) Grupo 1: Obra, Expressão, Manifestação e Item. Ref: https://www.ifla.org/publications/functional-requirements-for-bibliographic-records/" },
+    { q: "O RDA foi desenvolvido para substituir:",
+      o: ["A) CDD 23ª edição", "B) MARC 21", "C) AACR2", "D) ISBD"], a: 2,
+      exp: "O RDA (2010) substituiu o AACR2, alinhando-se ao FRBR e ao Linked Data. Ref: https://www.rdatoolkit.org" },
+    { q: "O conceito de 'análise de domínio' foi proposto por:",
+      o: ["A) Tefko Saracevic e Paul Kantor", "B) Birger Hjørland e Hanne Albrechtsen", "C) Jesse Shera e Margaret Egan", "D) Elaine Svenonius e Patrick Wilson"], a: 1,
+      exp: "Hjørland e Albrechtsen propuseram a análise de domínio em 1995. Ref: JASIST, 1995." },
+    { q: "O protocolo Z39.50 é utilizado para:",
+      o: ["A) Digitalização de documentos raros", "B) Busca e recuperação entre sistemas heterogêneos", "C) Geração automática de referências ABNT", "D) Exportação de dados para MARC 21"], a: 1,
+      exp: "O Z39.50 permite que sistemas diferentes consultem catálogos remotamente. Ref: https://www.loc.gov/z3950/agency/" },
+    { q: "A Lei de Bradford descreve:",
+      o: ["A) O crescimento exponencial da ciência", "B) A relação entre autores e produtividade", "C) A distribuição de artigos sobre um tema entre periódicos", "D) O impacto de citações em periódicos"], a: 2,
+      exp: "Bradford (1934): artigos sobre um tema se concentram em poucos periódicos nucleares. Ref: BRADFORD, S.C. Documentation, 1948." },
+    { q: "Metadados descritivos diferem de metadados administrativos porque:",
+      o: ["A) Descritivos identificam/localizam; administrativos gerenciam e preservam", "B) Descritivos são mais recentes", "C) Administrativos são só para repositórios digitais", "D) Não há diferença prática"], a: 0,
+      exp: "Descritivos: título, autor, assunto. Administrativos: direitos, proveniência, preservação. Ref: NISO. Understanding Metadata. https://www.niso.org/publications/understanding-metadata-2017" },
+    { q: "O VIAF (Virtual International Authority File) é:",
+      o: ["A) Sistema de catalogação da UNESCO", "B) Arquivo virtual de autoridades de múltiplas agências bibliográficas", "C) Formato de exportação do MARC 21", "D) Vocabulário controlado médico"], a: 1,
+      exp: "O VIAF agrega dados de autoridade de dezenas de bibliotecas nacionais. Ref: https://viaf.org" },
+    { q: "O modelo DIKW é criticado por:",
+      o: ["A) Ser complexo demais", "B) Apresentar hierarquia linear que simplifica relações complexas", "C) Não incluir sabedoria", "D) Ser exclusivo da gestão empresarial"], a: 1,
+      exp: "A linearidade do DIKW é criticada pois dados não viram automaticamente informação e conhecimento. Ref: ROWLEY, J. Journal of Information Science, 2007." },
+    { q: "O acesso aberto foi formalizado pela:",
+      o: ["A) Budapest Open Access Initiative (2002) e Declaração de Berlim (2003)", "B) Declaração de Salamanca (1994)", "C) Convenção de Berna (1886)", "D) Carta de Nairobi (2005)"], a: 0,
+      exp: "Ref: https://www.budapestopenaccessinitiative.org e https://openaccess.mpg.de/Berlin-Declaration" },
+    { q: "Preservação digital vai além do backup porque:",
+      o: ["A) É mais barata", "B) Garante acesso autêntico a longo prazo enfrentando obsolescência tecnológica", "C) Aplica-se só a PDF", "D) É obrigatória só para bibliotecas nacionais"], a: 1,
+      exp: "Envolve migração, emulação e normalização de formatos. Ref: CONARQ. Diretrizes para Preservação Digital, 2012." }
+  ],
+  doutorado: [
+    { q: "O BIBFRAME foi desenvolvido sobre qual tecnologia?",
+      o: ["A) XML Schema puro", "B) RDF (Resource Description Framework)", "C) JSON-LD exclusivamente", "D) HTML5 Semântico"], a: 1,
+      exp: "O BIBFRAME usa RDF, tecnologia da Web Semântica, para publicar dados como Linked Data. Ref: https://www.loc.gov/bibframe/" },
+    { q: "Svenonius (2000) define os objetivos bibliográficos como:",
+      o: ["A) Catalogar, indexar, classificar e difundir", "B) Encontrar, identificar, selecionar, obter e navegar", "C) Adquirir, preservar, organizar e disseminar", "D) Descrever, representar, recuperar e avaliar"], a: 1,
+      exp: "Svenonius reformulou os objetivos de Cutter em 5 funções do catálogo. Ref: SVENONIUS, E. MIT Press, 2000." },
+    { q: "Qual paradigma de Capurro critica a visão do usuário como processador isolado?",
+      o: ["A) Paradigma físico de Shannon", "B) Paradigma cognitivo de Belkin", "C) Paradigma social e hermenêutico", "D) Paradigma bibliométrico de Pritchard"], a: 2,
+      exp: "Capurro propõe o paradigma social/hermenêutico situando a informação em contextos culturais. Ref: CAPURRO; HJØRLAND. ARIST, 2003." },
+    { q: "O IFLA LRM diferencia-se do FRBR por:",
+      o: ["A) Ser exclusivo para recursos digitais", "B) Unificar FRBR, FRAD e FRSAD em modelo mais coerente", "C) Eliminar as entidades de Grupo 1", "D) Ser incompatível com o RDA"], a: 1,
+      exp: "O IFLA LRM (2017) consolidou os três modelos da IFLA. Ref: https://www.ifla.org/publications/node/11412" },
+    { q: "A noção de 'warrant' para vocabulários controlados foi desenvolvida por:",
+      o: ["A) Melvil Dewey", "B) Henry Evelyn Bliss — scientific and educational consensus", "C) S.R. Ranganathan", "D) Charles Cutter"], a: 1,
+      exp: "Bliss propôs que a OC deve basear-se no consenso científico e educacional. Ref: BLISS. The Organization of Knowledge in Libraries. 1933." },
+    { q: "Na teoria da relevância de Sperber e Wilson, relevância é:",
+      o: ["A) Correspondência exata entre termos de busca e documento", "B) Relação ótima entre efeito cognitivo máximo e menor esforço", "C) Avaliação objetiva do especialista", "D) Posição no ranking do sistema de recuperação"], a: 1,
+      exp: "Sperber e Wilson (1986): relevância maximiza efeito cognitivo com menor esforço. Ref: Relevance: Communication and Cognition. 1986." },
+    { q: "O 'regime de informação' (González de Gómez) refere-se a:",
+      o: ["A) Sistema de gerenciamento de bibliotecas", "B) Conjunto de normas, sujeitos e práticas que regulam produção e acesso à informação", "C) Política de restrição de documentos sigilosos", "D) Protocolo de interoperabilidade entre repositórios"], a: 1,
+      exp: "Categoria analítica que descreve como agentes interagem para produzir e distribuir informação. Ref: GÓMEZ, M.N.G. Ci.Inf., Brasília, 2002." },
+    { q: "A perspectiva crítica em CI inspirada em Habermas questiona tecnologias quando:",
+      o: ["A) São custosas para instituições públicas", "B) Servem à razão instrumental e ao controle social em vez de promover emancipação", "C) Não atendem padrões de interoperabilidade", "D) São adotadas sem treinamento"], a: 1,
+      exp: "A CI crítica questiona tecnologias que reforçam relações de poder assimétricas. Ref: FROHMANN, B. JASIST, 1992." },
+    { q: "A Análise de Domínio (Hjørland) define que a unidade de análise ideal é:",
+      o: ["A) O documento individual", "B) O usuário individual e seus estados cognitivos", "C) A comunidade discursiva com práticas e critérios epistêmicos compartilhados", "D) O sistema de recuperação e seus algoritmos"], a: 2,
+      exp: "Para Hjørland, a análise deve focar nas comunidades que definem o que conta como relevante. Ref: HJØRLAND, B. Library Trends, 2004." },
+    { q: "A criação do IBICT (então IBBD) em 1954 representou:",
+      o: ["A) A criação do primeiro curso de Biblioteconomia", "B) O estabelecimento do CFB", "C) A institucionalização de uma política nacional de informação científica", "D) A fundação da Biblioteca Nacional"], a: 2,
+      exp: "O IBBD (atual IBICT) foi o primeiro órgão nacional de informação científica do Brasil. Ref: https://www.ibict.br/institucional/apresentacao/historico" }
+  ]
+};
 
-        function runGame() {
-            document.getElementById('screen-config').classList.add('hidden');
-            document.getElementById('screen-game').classList.remove('hidden');
-            renderNext();
-        }
+let estado = { nivel:'', modo:'', idx:0, pts1:0, pts2:0, turno:1, respondida:false, acertosSeguidos:0, lista:[] };
 
-        function renderNext() {
-            let list = questions[data.lvl] || questions.graduacao;
-            let current = list[data.idx];
-            
-            if(!current) {
-                alert("Ciclo Finalizado! P1: " + data.s1 + (data.mode==='p2' ? " | P2: " + data.s2 : ""));
-                return location.reload();
-            }
+function selecionar(tipo, valor, el) {
+  const classe = tipo === 'lvl' ? '.b-lvl' : '.b-mod';
+  document.querySelectorAll(classe).forEach(b => b.classList.remove('ativo'));
+  el.classList.add('ativo');
+  estado[tipo === 'lvl' ? 'nivel' : 'modo'] = valor;
+  if (estado.nivel && estado.modo) {
+    document.getElementById('btn-iniciar').style.display = 'block';
+  }
+}
 
-            document.getElementById('display-q').innerText = current.q;
-            document.getElementById('txt-turn').innerText = data.mode === 'p2' ? "TURNO: P" + data.turn : "MODO SOLO";
-            
-            let h = '';
-            current.o.forEach((opt, i) => {
-                h += `<button class="btn" onclick="checkAns(${i}, ${current.a})">${opt}</button>`;
-            });
-            document.getElementById('display-opts').innerHTML = h;
-        }
+function iniciarJogo() {
+  const banco = BANCO[estado.nivel] || BANCO.graduacao;
+  estado.lista = [...banco].sort(() => Math.random() - 0.5);
+  estado.idx = 0; estado.pts1 = 0; estado.pts2 = 0;
+  estado.turno = 1; estado.respondida = false; estado.acertosSeguidos = 0;
+  document.getElementById('tela-config').classList.add('hidden');
+  document.getElementById('tela-jogo').classList.remove('hidden');
+  renderPergunta();
+}
 
-        function checkAns(choice, correct) {
-            if(choice === correct) {
-                if(data.turn === 1) data.s1++; else data.s2++;
-                alert("Correto!");
-            } else {
-                alert("Incorreto. Revise os conceitos.");
-            }
-            
-            data.idx++;
-            if(data.mode === 'p2') data.turn = data.turn === 1 ? 2 : 1;
-            document.getElementById('txt-score').innerText = data.mode === 'p2' ? `P1:${data.s1} | P2:${data.s2}` : `PONTOS: ${data.s1}`;
-            renderNext();
-        }
-    </script>
+function renderPergunta() {
+  if (estado.idx >= estado.lista.length) { mostrarResultado(); return; }
+  const total = estado.lista.length;
+  const atual = estado.lista[estado.idx];
+  estado.respondida = false;
+  if (estado.modo === 'p2') {
+    document.getElementById('txt-pts').textContent = 'P1: ' + estado.pts1 + ' | P2: ' + estado.pts2;
+    document.getElementById('txt-turno').textContent = 'Vez do P' + estado.turno;
+  } else {
+    document.getElementById('txt-pts').textContent = 'Pontos: ' + estado.pts1;
+    document.getElementById('txt-turno').textContent = 'Solo vs CPU';
+  }
+  document.getElementById('txt-prog').textContent = (estado.idx + 1) + '/' + total;
+  document.getElementById('txt-qnum').textContent = 'Pergunta ' + (estado.idx + 1) + ' de ' + total;
+  document.getElementById('txt-q').textContent = atual.q;
+  const divOpcoes = document.getElementById('div-opcoes');
+  divOpcoes.innerHTML = '';
+  atual.o.forEach(function(opcao, i) {
+    const btn = document.createElement('button');
+    btn.className = 'btn-opcao';
+    btn.textContent = opcao;
+    btn.onclick = function() { verificarResposta(i, atual.a, atual.exp); };
+    divOpcoes.appendChild(btn);
+  });
+  const fb = document.getElementById('div-feedback');
+  fb.className = 'feedback'; fb.textContent = '';
+  document.getElementById('btn-proxima').style.display = 'none';
+  document.getElementById('cpu-msg').classList.add('hidden');
+  renderStreak();
+  if (estado.modo === 'solo') { setTimeout(function(){ cpuJoga(atual.a); }, 1800); }
+}
+
+function verificarResposta(escolha, gabarito, explicacao) {
+  if (estado.respondida) return;
+  estado.respondida = true;
+  const botoes = document.querySelectorAll('.btn-opcao');
+  botoes.forEach(function(b){ b.disabled = true; });
+  const certo = escolha === gabarito;
+  botoes[gabarito].classList.add('certa');
+  if (!certo) botoes[escolha].classList.add('errada');
+  if (certo) {
+    if (estado.modo === 'p2' && estado.turno === 2) estado.pts2 += 10;
+    else estado.pts1 += 10;
+    estado.acertosSeguidos++;
+  } else {
+    estado.acertosSeguidos = 0;
+  }
+  const fb = document.getElementById('div-feedback');
+  fb.className = 'feedback ' + (certo ? 'certa' : 'errada');
+  fb.textContent = (certo ? '✅ Correto! ' : '❌ Incorreto. ') + explicacao;
+  if (estado.modo === 'p2') {
+    document.getElementById('txt-pts').textContent = 'P1: ' + estado.pts1 + ' | P2: ' + estado.pts2;
+  } else {
+    document.getElementById('txt-pts').textContent = 'Pontos: ' + estado.pts1;
+  }
+  renderStreak();
+  document.getElementById('btn-proxima').style.display = 'block';
+}
+
+function cpuJoga(gabarito) {
+  if (estado.respondida) return;
+  document.getElementById('cpu-msg').classList.remove('hidden');
+  setTimeout(function() {
+    document.getElementById('cpu-msg').classList.add('hidden');
+    if (!estado.respondida) {
+      estado.respondida = true;
+      const acerta = Math.random() > 0.5;
+      if (acerta) estado.pts2 += 10;
+      const botoes = document.querySelectorAll('.btn-opcao');
+      botoes.forEach(function(b){ b.disabled = true; });
+      botoes[gabarito].classList.add('certa');
+      if (!acerta) botoes[gabarito === 0 ? 1 : 0].classList.add('errada');
+      const atual = estado.lista[estado.idx];
+      const fb = document.getElementById('div-feedback');
+      fb.className = 'feedback ' + (acerta ? 'certa' : 'errada');
+      fb.textContent = '💻 CPU ' + (acerta ? 'acertou! ' : 'errou. ') + atual.exp;
+      document.getElementById('btn-proxima').style.display = 'block';
+    }
+  }, 1500);
+}
+
+function proximaPergunta() {
+  estado.idx++;
+  if (estado.modo === 'p2') { estado.turno = estado.turno === 1 ? 2 : 1; }
+  renderPergunta();
+}
+
+function renderStreak() {
+  const bar = document.getElementById('streak-bar');
+  bar.innerHTML = '';
+  for (var i = 0; i < 9; i++) {
+    const d = document.createElement('div');
+    d.className = 'streak-dot' + (i < estado.acertosSeguidos ? ' on' : '');
+    bar.appendChild(d);
+  }
+}
+
+function mostrarResultado() {
+  document.getElementById('tela-jogo').classList.add('hidden');
+  document.getElementById('tela-resultado').classList.remove('hidden');
+  const total = estado.lista.length;
+  const pct1 = Math.round((estado.pts1 / (total * 10)) * 100);
+  let html = '';
+  if (estado.modo === 'p2') {
+    const v = estado.pts1 > estado.pts2 ? 'Jogador 1 venceu!' : estado.pts2 > estado.pts1 ? 'Jogador 2 venceu!' : 'Empate!';
+    html = '<div style="text-align:center;margin-bottom:16px"><div style="font-size:2rem">🏆</div><div class="resultado-nome">' + v + '</div></div>';
+    html += '<div class="resultado-linha"><span>Jogador 1</span><strong>' + estado.pts1 + ' pts</strong></div>';
+    html += '<div class="resultado-linha"><span>Jogador 2</span><strong>' + estado.pts2 + ' pts</strong></div>';
+    html += '<div class="resultado-linha"><span>Perguntas</span><strong>' + total + '</strong></div>';
+  } else {
+    const m = pct1 >= 90 ? '🥇' : pct1 >= 70 ? '🥈' : pct1 >= 50 ? '🥉' : '📚';
+    html = '<div style="text-align:center;margin-bottom:16px"><div style="font-size:2.5rem">' + m + '</div>';
+    html += '<div class="resultado-pts">' + estado.pts1 + ' pts</div>';
+    html += '<div style="font-size:0.8rem;color:#999">' + pct1 + '% de aproveitamento</div></div>';
+    html += '<div class="resultado-linha"><span>Acertos</span><strong>' + (estado.pts1/10) + ' de ' + total + '</strong></div>';
+    html += '<div class="resultado-linha"><span>CPU marcou</span><strong>' + estado.pts2 + ' pts</strong></div>';
+    html += '<div class="resultado-linha"><span>Resultado</span><strong>' + (pct1 >= 70 ? '✅ Aprovado!' : '📖 Estude mais!') + '</strong></div>';
+  }
+  document.getElementById('div-resultado').innerHTML = html;
+}
+
+function reiniciar() {
+  estado = { nivel:'', modo:'', idx:0, pts1:0, pts2:0, turno:1, respondida:false, acertosSeguidos:0, lista:[] };
+  document.querySelectorAll('.btn-sel').forEach(function(b){ b.classList.remove('ativo'); });
+  document.getElementById('btn-iniciar').style.display = 'none';
+  document.getElementById('tela-resultado').classList.add('hidden');
+  document.getElementById('tela-config').classList.remove('hidden');
+}
+</script>
 </body>
 </html>
